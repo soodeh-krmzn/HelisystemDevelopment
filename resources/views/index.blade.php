@@ -8,11 +8,13 @@
             <div class="row">
                 <div class="col-12">
                     <div class="info-box">
-                        <span class="info-box-icon {{ \App\Models\Option::get_option("update_mode") == 1 ? "bg-success" : "bg-danger" }} elevation-1"><i class="fa fa-refresh {{ \App\Models\Option::get_option("update_mode") == 1 ? "fa-spin" : "" }}"></i></span>
+                        <span
+                            class="info-box-icon {{ \App\Models\Option::get_option('update_mode') == 1 ? 'bg-success' : 'bg-danger' }} elevation-1"><i
+                                class="fa fa-refresh {{ \App\Models\Option::get_option('update_mode') == 1 ? 'fa-spin' : '' }}"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">حالت بروزرسانی</span>
                             <span class="info-box-number">
-                                {{ \App\Models\Option::get_option("update_mode") == 1 ? "فعال" : "غیرفعال" }}
+                                {{ \App\Models\Option::get_option('update_mode') == 1 ? 'فعال' : 'غیرفعال' }}
                             </span>
                         </div>
                     </div>
@@ -51,7 +53,12 @@
                         <span class="info-box-icon bg-info elevation-1"><i class="fa fa-envelope"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">شارژ مگفا</span>
-                            <span class="info-box-number">{{ number_format(\App\Models\Option::get_option('magfa_credit')) }}</span>
+                            @if (\App\Models\Option::get_option('magfa_credit') == null)
+                                <span class="info-box-number">"مشخض نشده"</span>
+                            @else
+                                <span
+                                    class="info-box-number">{{ number_format(\App\Models\Option::get_option('magfa_credit')) }}</span>
+                            @endif
                             <form action="{{ route('updateMagfaCredit') }}" method="post">
                                 @csrf
                                 <button class="btn btn-warning btn-sm"><i class="fa fa-refresh"></i></button>
@@ -153,7 +160,8 @@
                             <div class="row">
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-success"><i class="fa fa-caret-up"></i> 17%</span>
+                                        <span class="description-percentage text-success"><i class="fa fa-caret-up"></i>
+                                            17%</span>
                                         <h5 class="description-header">تومان 35,210.43</h5>
                                         <span class="description-text">کل گردش حساب</span>
                                     </div>
@@ -162,7 +170,8 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-warning"><i class="fa fa-caret-left"></i> 0%</span>
+                                        <span class="description-percentage text-warning"><i class="fa fa-caret-left"></i>
+                                            0%</span>
                                         <h5 class="description-header">تومان 10,390.90</h5>
                                         <span class="description-text">فروش کل</span>
                                     </div>
@@ -171,7 +180,8 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-success"><i class="fa fa-caret-up"></i> 20%</span>
+                                        <span class="description-percentage text-success"><i class="fa fa-caret-up"></i>
+                                            20%</span>
                                         <h5 class="description-header">تومان 24,813.53</h5>
                                         <span class="description-text">سود کل</span>
                                     </div>
@@ -180,7 +190,8 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block">
-                                        <span class="description-percentage text-danger"><i class="fa fa-caret-down"></i> 18%</span>
+                                        <span class="description-percentage text-danger"><i class="fa fa-caret-down"></i>
+                                            18%</span>
                                         <h5 class="description-header">1200</h5>
                                         <span class="description-text">اهداف</span>
                                     </div>
@@ -255,12 +266,15 @@
                                     <h3 class="card-title">چت مستقیم</h3>
 
                                     <div class="card-tools">
-                                        <span data-toggle="tooltip" title="3 New Messages" class="badge badge-warning">3</span>
-                                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                                        <button type="button" class="btn btn-tool" data-toggle="tooltip" title="Contacts"
-                                                data-widget="chat-pane-toggle">
+                                        <span data-toggle="tooltip" title="3 New Messages"
+                                            class="badge badge-warning">3</span>
+                                        <button type="button" class="btn btn-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button type="button" class="btn btn-tool" data-toggle="tooltip"
+                                            title="Contacts" data-widget="chat-pane-toggle">
                                             <i class="fa fa-comments"></i></button>
-                                        <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i>
+                                        <button type="button" class="btn btn-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -275,7 +289,8 @@
                                                 <span class="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
                                             </div>
                                             <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image">
+                                            <img class="direct-chat-img" src="dist/img/user1-128x128.jpg"
+                                                alt="message user image">
                                             <!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
                                                 واقعا این قالب رایگانه ؟ قابل باور نیست
@@ -291,7 +306,8 @@
                                                 <span class="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
                                             </div>
                                             <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image">
+                                            <img class="direct-chat-img" src="dist/img/user3-128x128.jpg"
+                                                alt="message user image">
                                             <!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
                                                 بهتره اینو باور کنی :)
@@ -307,7 +323,8 @@
                                                 <span class="direct-chat-timestamp float-right">23 Jan 5:37 pm</span>
                                             </div>
                                             <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image">
+                                            <img class="direct-chat-img" src="dist/img/user1-128x128.jpg"
+                                                alt="message user image">
                                             <!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
                                                 میخوام با این قالب یه اپلیکیشن باحال بزنم ؟‌ تو هم همکاری میکنی ؟
@@ -323,7 +340,8 @@
                                                 <span class="direct-chat-timestamp float-left">23 Jan 6:10 pm</span>
                                             </div>
                                             <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image">
+                                            <img class="direct-chat-img" src="dist/img/user3-128x128.jpg"
+                                                alt="message user image">
                                             <!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
                                                 اره حتما
@@ -343,10 +361,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user1-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                Count Dracula
-                                <small class="contacts-list-date float-right">2/28/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            Count Dracula
+                                                            <small class="contacts-list-date float-right">2/28/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">How have you been? I was...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -358,10 +376,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user7-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                Sarah Doe
-                                <small class="contacts-list-date float-right">2/23/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            Sarah Doe
+                                                            <small class="contacts-list-date float-right">2/23/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">I will be waiting for...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -373,10 +391,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user3-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                Nadia Jolie
-                                <small class="contacts-list-date float-right">2/20/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            Nadia Jolie
+                                                            <small class="contacts-list-date float-right">2/20/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">I'll call you back at...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -388,10 +406,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user5-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                Nora S. Vans
-                                <small class="contacts-list-date float-right">2/10/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            Nora S. Vans
+                                                            <small class="contacts-list-date float-right">2/10/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">Where is your new...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -403,10 +421,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user6-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                John K.
-                                <small class="contacts-list-date float-right">1/27/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            John K.
+                                                            <small class="contacts-list-date float-right">1/27/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">Can I take a look at...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -418,10 +436,10 @@
                                                     <img class="contacts-list-img" src="dist/img/user8-128x128.jpg">
 
                                                     <div class="contacts-list-info">
-                              <span class="contacts-list-name">
-                                Kenneth M.
-                                <small class="contacts-list-date float-right">1/4/2015</small>
-                              </span>
+                                                        <span class="contacts-list-name">
+                                                            Kenneth M.
+                                                            <small class="contacts-list-date float-right">1/4/2015</small>
+                                                        </span>
                                                         <span class="contacts-list-msg">Never mind I found...</span>
                                                     </div>
                                                     <!-- /.contacts-list-info -->
@@ -437,10 +455,11 @@
                                 <div class="card-footer">
                                     <form action="#" method="post">
                                         <div class="input-group">
-                                            <input type="text" name="message" placeholder="تایپ پیام ..." class="form-control">
+                                            <input type="text" name="message" placeholder="تایپ پیام ..."
+                                                class="form-control">
                                             <span class="input-group-append">
-                          <button type="button" class="btn btn-warning">ارسال</button>
-                        </span>
+                                                <button type="button" class="btn btn-warning">ارسال</button>
+                                            </span>
                                         </div>
                                     </form>
                                 </div>
@@ -458,9 +477,11 @@
 
                                     <div class="card-tools">
                                         <span class="badge badge-danger">8 پیام جدید</span>
-                                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                        <button type="button" class="btn btn-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i>
                                         </button>
-                                        <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i>
+                                        <button type="button" class="btn btn-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -541,70 +562,77 @@
                             <div class="table-responsive">
                                 <table class="table m-0">
                                     <thead>
-                                    <tr>
-                                        <th>ای دی محصول</th>
-                                        <th>محصول</th>
-                                        <th>وضعیت</th>
-                                        <th>محبوبیت</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ای دی محصول</th>
+                                            <th>محصول</th>
+                                            <th>وضعیت</th>
+                                            <th>محبوبیت</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>بازی ندای وظیفه ۱۰</td>
-                                        <td><span class="badge badge-success">ارسال شده</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>تلویزیون هوشمند سامسونگ</td>
-                                        <td><span class="badge badge-warning">در حال پردازش</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>آیفون X max</td>
-                                        <td><span class="badge badge-danger">تحویل داده شده</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>تلویزیون هوشمند سامسونگ</td>
-                                        <td><span class="badge badge-info">در انتظار</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>تلویزیون هوشمند سامسونگ</td>
-                                        <td><span class="badge badge-warning">در حال پردازش</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>آیفون X max</td>
-                                        <td><span class="badge badge-danger">تحویل داده شده</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>بازی ندای وظیفه ۱۰</td>
-                                        <td><span class="badge badge-success">ارسال شده</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR9842</a></td>
+                                            <td>بازی ندای وظیفه ۱۰</td>
+                                            <td><span class="badge badge-success">ارسال شده</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#00a65a" data-height="20">
+                                                    90,80,90,-70,61,-83,63</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR1848</a></td>
+                                            <td>تلویزیون هوشمند سامسونگ</td>
+                                            <td><span class="badge badge-warning">در حال پردازش</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#f39c12" data-height="20">
+                                                    90,80,-90,70,61,-83,68</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                            <td>آیفون X max</td>
+                                            <td><span class="badge badge-danger">تحویل داده شده</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#f56954" data-height="20">
+                                                    90,-80,90,70,-61,83,63</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                            <td>تلویزیون هوشمند سامسونگ</td>
+                                            <td><span class="badge badge-info">در انتظار</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#00c0ef" data-height="20">
+                                                    90,80,-90,70,-61,83,63</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR1848</a></td>
+                                            <td>تلویزیون هوشمند سامسونگ</td>
+                                            <td><span class="badge badge-warning">در حال پردازش</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#f39c12" data-height="20">
+                                                    90,80,-90,70,61,-83,68</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                            <td>آیفون X max</td>
+                                            <td><span class="badge badge-danger">تحویل داده شده</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#f56954" data-height="20">
+                                                    90,-80,90,70,-61,83,63</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="pages/examples/invoice.html">OR9842</a></td>
+                                            <td>بازی ندای وظیفه ۱۰</td>
+                                            <td><span class="badge badge-success">ارسال شده</span></td>
+                                            <td>
+                                                <div class="sparkbar" data-color="#00a65a" data-height="20">
+                                                    90,80,90,-70,61,-83,63</div>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -669,9 +697,11 @@
                             <h3 class="card-title">مرورگر‌ها</h3>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                <button type="button" class="btn btn-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i>
+                                <button type="button" class="btn btn-tool" data-widget="remove"><i
+                                        class="fa fa-times"></i>
                                 </button>
                             </div>
                         </div>
@@ -706,24 +736,24 @@
                                     <a href="#" class="nav-link">
                                         ایران
                                         <span class="float-left text-danger">
-                        <i class="fa fa-arrow-down text-sm"></i>
-                        12%</span>
+                                            <i class="fa fa-arrow-down text-sm"></i>
+                                            12%</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#" class="nav-link">
                                         انگلیس
                                         <span class="float-left text-success">
-                        <i class="fa fa-arrow-up text-sm"></i> 4%
-                      </span>
+                                            <i class="fa fa-arrow-up text-sm"></i> 4%
+                                        </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#" class="nav-link">
                                         چین
                                         <span class="float-left text-warning">
-                        <i class="fa fa-arrow-left text-sm"></i> 0%
-                      </span>
+                                            <i class="fa fa-arrow-left text-sm"></i> 0%
+                                        </span>
                                     </a>
                                 </li>
                             </ul>
@@ -757,8 +787,8 @@
                                         <a href="javascript:void(0)" class="product-title">تلویزیون سامسونگ
                                             <span class="badge badge-warning float-left">تومان 1800</span></a>
                                         <span class="product-description">
-                        سامسونگ ۳۲ اینچی، ال ای دی و سالم
-                      </span>
+                                            سامسونگ ۳۲ اینچی، ال ای دی و سالم
+                                        </span>
                                     </div>
                                 </li>
                                 <!-- /.item -->
@@ -770,8 +800,8 @@
                                         <a href="javascript:void(0)" class="product-title">دوچرخه
                                             <span class="badge badge-info float-left">تومان 700</span></a>
                                         <span class="product-description">
-                         دوچرخه ۲۶، کاملا اسپورت و کوهستانی
-                      </span>
+                                            دوچرخه ۲۶، کاملا اسپورت و کوهستانی
+                                        </span>
                                     </div>
                                 </li>
                                 <!-- /.item -->
@@ -782,12 +812,12 @@
                                     <div class="product-info">
                                         <a href="javascript:void(0)" class="product-title">
                                             ایکس‌ باکس <span class="badge badge-danger float-left">
-                        تومان 350
-                      </span>
+                                                تومان 350
+                                            </span>
                                         </a>
                                         <span class="product-description">
-                        کنسول ایکس باکس برای بازی های توپ و باحال
-                      </span>
+                                            کنسول ایکس باکس برای بازی های توپ و باحال
+                                        </span>
                                     </div>
                                 </li>
                                 <!-- /.item -->
@@ -799,8 +829,8 @@
                                         <a href="javascript:void(0)" class="product-title">پلی استیشن 4
                                             <span class="badge badge-success float-left">$399</span></a>
                                         <span class="product-description">
-                        پلی استیشن ۴ با ۳۰۰ گیگ حافظه داخلی
-                      </span>
+                                            پلی استیشن ۴ با ۳۰۰ گیگ حافظه داخلی
+                                        </span>
                                     </div>
                                 </li>
                                 <!-- /.item -->
