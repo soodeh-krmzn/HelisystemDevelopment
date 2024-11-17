@@ -54,7 +54,7 @@
                         <div class="info-box-content">
                             <span class="info-box-text">شارژ مگفا</span>
                             @if (\App\Models\Option::get_option('magfa_credit') == null)
-                                <span class="info-box-number">"مشخض نشده"</span>
+                                <span class="info-box-number">نامشخص</span>
                             @else
                                 <span
                                     class="info-box-number">{{ number_format(\App\Models\Option::get_option('magfa_credit')) }}</span>

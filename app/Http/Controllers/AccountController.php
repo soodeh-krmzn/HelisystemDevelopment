@@ -113,20 +113,20 @@ class AccountController extends Controller
         if ($request->status == "active" && $account->charge_date == null) {
             $account->charge_date = today();
         }
-        if ($request->status == "active") {
-            $a = new SMS();
-            $fullName = $account->name . ' ' . $account->family;
-            $option = new Option;
-            $signiture = $option->get_option('sms_signiture_fa');
+        // if ($request->status == "active") {
+        //     $a = new SMS();
+        //     $fullName = $account->name . ' ' . $account->family;
+        //     $option = new Option;
+        //     $signiture = $option->get_option('sms_signiture_fa');
 
-            $message = __('message.activation', [
-                'name' => $fullName,
-                'center' => $account->center,
-                'signiture' => $signiture,
-            ], 'fa');
+        //     $message = __('message.activation', [
+        //         'name' => $fullName,
+        //         'center' => $account->center,
+        //         'signiture' => $signiture,
+        //     ], 'fa');
 
-            $a->send($account->mobile, $message);
-        }
+        //     $a->send($account->mobile, $message);
+        // }
         Alert::success("موفق", "وضعیت اشتراک با موفقیت تغییر کرد.");
         $account->save();
     }
