@@ -7,8 +7,10 @@ use App\Services\SMS;
 use App\Models\Option;
 use App\Models\Account;
 use App\Models\Package;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -148,9 +150,15 @@ class AccountController extends Controller
         } catch (\Throwable $th) {
             dd($th, $newPassword);
         }
-        $account->db_name = Crypt::encryptString($request->db_name);
-        $account->db_user = Crypt::encryptString($request->db_user);
-        $account->db_pass = Crypt::encryptString($request->db_pass);
+        $key = base64_decode(Config::get('app.custom_key'));
+        $encrypter = new Encrypter($key, Config::get('app.cipher'));
+        $account->db_name = $encrypter->encryptString($request->db_name);
+        $account->db_user = $encrypter->encryptString($request->db_name);
+        $account->db_pass = $encrypter->encryptString($request->db_name);
+
+        // $account->db_name = Crypt::encryptString($request->db_name);
+        // $account->db_user = Crypt::encryptString($request->db_user);
+        // $account->db_pass = Crypt::encryptString($request->db_pass);
         $account->save();
 
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
