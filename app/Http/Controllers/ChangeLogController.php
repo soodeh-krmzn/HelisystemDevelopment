@@ -92,7 +92,7 @@ class ChangeLogController extends Controller
     {
         // return false;
         // $accounts = Account::all();
-        $account = Account::findOrFail('198');
+        $account = Account::findOrFail('2');
         // foreach ($accounts  as $account) {
 
             DB::purge('mysql');
@@ -100,8 +100,8 @@ class ChangeLogController extends Controller
                 'driver' => 'mysql',
                 'host' => 'localhost',
                 'database' => $account->id . 'db',
-                'username' => 'Heli_dbUser',
-                'password' => 'by(tUETH@by(tUETH@',
+                'username' => 'root',
+                'password' => 'v8F7MPy24gFwLizqU05Jqu1l',
                 'charset' => 'utf8mb4',
                 'collation' => 'utf8mb4_unicode_ci',
                 'prefix' => '',
@@ -131,8 +131,8 @@ class ChangeLogController extends Controller
                 // ");
 
                 //To add UUID for table
-                // DB::statement("ALTER TABLE `people` ADD `uuid` CHAR(36) NULL UNIQUE AFTER `id`");
-                // DB::statement("UPDATE `people` SET `uuid` = (UUID())");
+                DB::statement("ALTER TABLE `people` ADD `uuid` CHAR(36) NULL UNIQUE AFTER `id`");
+                DB::statement("UPDATE `people` SET `uuid` = (UUID())");
                 
                 DB::commit();
             } catch (\Throwable $th) {

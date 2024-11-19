@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use PDO;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class AccountController extends Controller
@@ -65,9 +66,9 @@ class AccountController extends Controller
 
     public function edit(Account $account)
     {
-        $sms_packages=Package::where('type','sms')->get();
-        $account_packages=Package::withoutGlobalScope('lang')->where('type','account')->get();
-        return view('account.edit', compact('account','sms_packages','account_packages'));
+        $sms_packages = Package::where('type', 'sms')->get();
+        $account_packages = Package::withoutGlobalScope('lang')->where('type', 'account')->get();
+        return view('account.edit', compact('account', 'sms_packages', 'account_packages'));
     }
 
     public function update(Request $request, Account $account)
@@ -99,8 +100,8 @@ class AccountController extends Controller
             // 'group_id' => $request->group_id,
             'slug' => $request->slug,
             'zarinpal' => $request->zarinpal,
-            'sms_package_id'=>$request->sms_package,
-            'package_id'=>$request->account_package,
+            'sms_package_id' => $request->sms_package,
+            'package_id' => $request->account_package,
         ]);
 
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
@@ -164,13 +165,14 @@ class AccountController extends Controller
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
         return redirect()->route('account.index');
     }
-    public function privilages(){
+    public function privilages()
+    {
         return false;
-        $accounts=Account::all();
-        $Errors=collect([]);
+        $accounts = Account::all();
+        $Errors = collect([]);
         foreach ($accounts as $account) {
-            $dbName = $account->id.'db';
-            $newUsername =$account->id.'user';
+            $dbName = $account->id . 'db';
+            $newUsername = $account->id . 'user';
             $newPassword = Str::random(12);
             if ($account->db_name) {
                 try {
@@ -178,10 +180,10 @@ class AccountController extends Controller
                     DB::statement("CREATE USER '$newUsername'@'%' IDENTIFIED BY '$newPassword'");
                     DB::statement("GRANT ALL PRIVILEGES ON `$dbName`.* TO '$newUsername'@'%';");
                 } catch (\Throwable $th) {
-                   $Errors[$account->id]=$th->getMessage();
+                    $Errors[$account->id] = $th->getMessage();
                 }
-            }else{
-                $Errors[$account->id]='dose not have a database yet';
+            } else {
+                $Errors[$account->id] = 'dose not have a database yet';
             }
 
             $account->db_name = Crypt::encryptString($dbName);
