@@ -369,18 +369,37 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        $db_name = $account->db_name;
-        $db_user = $account->db_user;
-        $db_pass = $account->db_pass;
+        // $db_name = $account->db_name;
+        // $db_user = $account->db_user;
+        // $db_pass = $account->db_pass;
 
-        $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
+        // $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
+
+        // DB::purge('useraccount');
+        // Config::set('database.connections.useraccount', [
+        //     'driver' => 'mysql',
+        //     'host' => 'localhost',
+        //     'database' => $decrypted['name'],
+        //     'username' => $decrypted['user'],
+        //     'password' => $decrypted['pass'],
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'strict' => false,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ]);
+
         DB::purge('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => $decrypted['name'],
-            'username' => $decrypted['user'],
-            'password' => $decrypted['pass'],
+            'database' => '3db',
+            'username' => '3user',
+            'password' => 'jVHRfOQnDQ3v',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -391,12 +410,13 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
+
         try {
             $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
             $data = DB::connection('useraccount')->select($query);
             return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Database connection failed sdfsdf: ' . $e->getMessage()], 500);
         }
     }
 
@@ -410,18 +430,36 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        $db_name = $account->db_name;
-        $db_user = $account->db_user;
-        $db_pass = $account->db_pass;
+        // $db_name = $account->db_name;
+        // $db_user = $account->db_user;
+        // $db_pass = $account->db_pass;
 
-        $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
+        // $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
+        // DB::purge('useraccount');
+        // Config::set('database.connections.useraccount', [
+        //     'driver' => 'mysql',
+        //     'host' => 'localhost',
+        //     'database' => $decrypted['name'],
+        //     'username' => $decrypted['user'],
+        //     'password' => $decrypted['pass'],
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'strict' => false,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ]);
+
         DB::purge('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => $decrypted['name'],
-            'username' => $decrypted['user'],
-            'password' => $decrypted['pass'],
+            'database' => '3db',
+            'username' => '3user',
+            'password' => 'jVHRfOQnDQ3v',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
