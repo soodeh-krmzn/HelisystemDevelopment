@@ -472,13 +472,15 @@ class ApiController extends Controller
         ]);
 
         try {
-            if ($tableName === 'games') {
-                $query = "SELECT * FROM {$tableName} WHERE id = ? AND status = 0 AND deleted_at IS NULL";
-                $data = DB::connection('useraccount')->select($query, [$id]);
-            } else {
-                $query = "SELECT * FROM {$tableName} WHERE id = ?";
-                $data = DB::connection('useraccount')->select($query, [$id]);
-            }
+            // if ($tableName === 'games') {
+            //     $query = "SELECT * FROM {$tableName} WHERE id = ? AND status = 0 AND deleted_at IS NULL";
+            //     $data = DB::connection('useraccount')->select($query, [$id]);
+            // } else {
+            //     $query = "SELECT * FROM {$tableName} WHERE id = ?";
+            //     $data = DB::connection('useraccount')->select($query, [$id]);
+            // }
+            $query = "SELECT * FROM {$tableName} WHERE id = ?";
+            $data = DB::connection('useraccount')->select($query, [$id]);
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
