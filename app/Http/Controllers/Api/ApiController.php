@@ -508,4 +508,43 @@ class ApiController extends Controller
     //     );
     //     Sync::updateOrCreate(['uuid' => $request->uuid], ['status' => 1]);
     // }
+
+
+    //SYNC FROM OFFLINE TO ONLINE
+    public function storeSyncData(Request $request)
+    {
+        $validated = $request->validate([
+            'model_name' => 'required|string',
+            'm_uuid' => 'nullable|string',
+            'data' => 'required|array',
+            'id' => 'required|integer',
+        ]);
+
+        try {
+            $modelClass = $validated['model_name']; // Example: App\Models\YourModel
+            if (!class_exists($modelClass)) {
+                return response()->json(['error' => 'Invalid model name'], 400);
+            }
+
+            $data = $validated['data'];
+            $id = $validated['id'];
+            $uuid = $validated['m_uuid'] ?? null;
+
+            // Fetch the existing record using 'id'.
+            $existingRecord = $modelClass::find($id);
+
+            if ($existingRecord) {
+                // Update the existing record.
+                $existingRecord->update($data);
+            } else {
+                // Create a new record and ensure the 'id' is set explicitly.
+                $modelClass::create(array_merge($data, ['id' => $id]));
+            }
+
+            return response()->json(['message' => 'Record synced successfully'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error syncing data: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to sync data'], 500);
+        }
+    }
 }
