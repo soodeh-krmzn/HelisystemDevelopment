@@ -513,12 +513,12 @@ class ApiController extends Controller
     //SYNC FROM OFFLINE TO ONLINE
     public function storeSyncData(Request $request)
     {
-        $validated = $request->validate([
-            'model_name' => 'required|string',
-            'id' => 'required|integer',
-            'data' => 'required|array',
-            // 'accountId' => 'required|integer',
-        ]);
+        // $validated = $request->validate([
+        //     'model_name' => 'required|string',
+        //     'id' => 'required|integer',
+        //     'data' => 'required|array',
+        //     // 'accountId' => 'required|integer',
+        // ]);
 
         // Fetch account details
         $accountId = 19853;
