@@ -521,56 +521,55 @@ class ApiController extends Controller
         ]);
 
         // Fetch account details
-        $accountId = 3;
+        $accountId = 19853;
         $account = Account::find($accountId);
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        // Set up the dynamic database connection
-        DB::purge('useraccount');
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db', // Replace with $account->db_name (e.g., dynamically decrypted database)
-            'username' => '3user', // Replace with $account->db_user
-            'password' => 'jVHRfOQnDQ3v', // Replace with $account->db_pass
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
+        // DB::purge('useraccount');
+        // Config::set('database.connections.useraccount', [
+        //     'driver' => 'mysql',
+        //     'host' => 'localhost',
+        //     'database' => '3db', 
+        //     'username' => '3user',
+        //     'password' => 'jVHRfOQnDQ3v',
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => false,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ]);
 
-        try {
-            // Find or insert the data into the specific table in the account's database
-            $modelClass = $validated['model_name'];
+        // try {
+        //     // Find or insert the data into the specific table in the account's database
+        //     $modelClass = $validated['model_name'];
 
-            if (!class_exists($modelClass)) {
-                return response()->json(['error' => 'Invalid model name'], 400);
-            }
+        //     if (!class_exists($modelClass)) {
+        //         return response()->json(['error' => 'Invalid model name'], 400);
+        //     }
 
-            // Use the `useraccount` connection for this model
-            $modelInstance = (new $modelClass)->setConnection('useraccount');
+        //     // Use the `useraccount` connection for this model
+        //     $modelInstance = (new $modelClass)->setConnection('useraccount');
 
-            $existingRecord = $modelInstance->find($validated['id']);
+        //     $existingRecord = $modelInstance->find($validated['id']);
 
-            if ($existingRecord) {
-                // Update the existing record
-                $existingRecord->update($validated['data']);
-            } else {
-                // Insert a new record
-                $modelInstance->create(array_merge($validated['data'], ['id' => $validated['id']]));
-            }
+        //     if ($existingRecord) {
+        //         // Update the existing record
+        //         $existingRecord->update($validated['data']);
+        //     } else {
+        //         // Insert a new record
+        //         $modelInstance->create(array_merge($validated['data'], ['id' => $validated['id']]));
+        //     }
 
-            return response()->json(['message' => 'Record synced successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
-        }
+        //     return response()->json(['message' => 'Record synced successfully'], 200);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
+        // }
     }
 
 
