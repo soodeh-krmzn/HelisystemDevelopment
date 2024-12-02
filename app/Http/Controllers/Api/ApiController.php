@@ -14,6 +14,7 @@ use PDO;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
+use App\Services\Database;
 
 class ApiController extends Controller
 {
@@ -539,23 +540,23 @@ class ApiController extends Controller
         }
 
         // Configure database connection
-        DB::purge('useraccount');
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
-        DB::connection('useraccount');
+        // DB::purge('useraccount');
+        // Config::set('database.connections.useraccount', [
+        //     'driver' => 'mysql',
+        //     'host' => 'localhost',
+        //     'database' => '3db',
+        //     'username' => '3user',
+        //     'password' => 'jVHRfOQnDQ3v',
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => false,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ]);
+        // DB::connection('useraccount');
 
         try {
             $modelClass = $validated['model_name'];
@@ -565,8 +566,9 @@ class ApiController extends Controller
             }
 
             // Use the `useraccount` connection for this model
-            $modelInstance = (new $modelClass)->setConnection('useraccount');
-
+            $modelInstance = new $modelClass;
+            $modelInstance->setConnection('useraccount');
+            
             // Handle data and ID
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
@@ -584,7 +586,7 @@ class ApiController extends Controller
                 // Update the existing record
                 unset($data['id']); // Prevent ID overwrite
                 $existingRecord->timestamps = false;
-                $existingRecord->forceFill($data);
+                $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
