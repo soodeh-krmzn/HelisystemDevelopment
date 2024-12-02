@@ -555,7 +555,7 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
-
+        DB::connection('useraccount');
         try {
             $modelClass = $validated['model_name'];
 
@@ -591,7 +591,6 @@ class ApiController extends Controller
             } else {
                 // Insert new record
                 $newRecord = new $modelInstance($data);
-                $newRecord->forceFill($data);
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
