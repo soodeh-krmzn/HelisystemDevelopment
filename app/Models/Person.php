@@ -10,6 +10,7 @@ use App\Services\Database;
 class Person extends Model
 {
     protected $connection = 'useraccount';
+    protected $guarded = [];
 
     public function __construct(array $attributes = [])
     {
