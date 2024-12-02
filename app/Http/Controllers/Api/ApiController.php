@@ -521,7 +521,7 @@ class ApiController extends Controller
         return null;
     }
 
-    public function syncData(Request $request)
+    public function storeSyncData(Request $request)
     {
         // Validate request data
         $validated = $request->validate([
