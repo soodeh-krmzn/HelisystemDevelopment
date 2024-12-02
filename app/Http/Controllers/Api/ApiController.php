@@ -522,86 +522,86 @@ class ApiController extends Controller
     }
 
     public function syncData(Request $request)
-{
-    // Validate request data
-    $validated = $request->validate([
-        'model_name' => 'required|string',
-        'id' => 'nullable|integer',
-        'data' => 'required|array',
-    ]);
+    {
+        // Validate request data
+        $validated = $request->validate([
+            'model_name' => 'required|string',
+            'id' => 'nullable|integer',
+            'data' => 'required|array',
+        ]);
 
-    // Fetch account details
-    $accountId = 3; // Replace this with the correct account logic
-    $account = Account::find($accountId);
+        // Fetch account details
+        $accountId = 3; // Replace this with the correct account logic
+        $account = Account::find($accountId);
 
-    if (!$account) {
-        return response()->json(['error' => 'Account not found'], 404);
+        if (!$account) {
+            return response()->json(['error' => 'Account not found'], 404);
+        }
+
+        // Configure database connection
+        DB::purge('useraccount');
+        Config::set('database.connections.useraccount', [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => '3db',
+            'username' => '3user',
+            'password' => 'jVHRfOQnDQ3v',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ]);
+
+        try {
+            $modelClass = $validated['model_name'];
+
+            if (!class_exists($modelClass)) {
+                return response()->json(['error' => 'Invalid model name'], 400);
+            }
+
+            // Use the `useraccount` connection for this model
+            $modelInstance = (new $modelClass)->setConnection('useraccount');
+            $data = $validated['data'];
+            $id = $validated['id'] ?? null;
+
+            // Handle timestamps
+            $createdAt = $data['created_at'] ?? null;
+            $updatedAt = $data['updated_at'] ?? null;
+
+            if ($id) {
+                // Search by ID if provided
+                $existingRecord = $modelInstance->find($id);
+            } else {
+                // Search by UUID or unique fields if no ID
+                $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            }
+
+            if ($existingRecord) {
+                // Update the record
+                unset($data['id']); // Prevent ID overwrite
+                $existingRecord->timestamps = false;
+                $existingRecord->fill($data);
+                if ($createdAt) $existingRecord->created_at = $createdAt;
+                if ($updatedAt) $existingRecord->updated_at = $updatedAt;
+                $existingRecord->save();
+            } else {
+                // Insert new record
+                $newRecord = new $modelInstance($data);
+                $newRecord->timestamps = false;
+                if ($createdAt) $newRecord->created_at = $createdAt;
+                if ($updatedAt) $newRecord->updated_at = $updatedAt;
+                $newRecord->save();
+            }
+
+            return response()->json(['message' => 'Record synced successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
+        }
     }
-
-    // Configure database connection
-    DB::purge('useraccount');
-    Config::set('database.connections.useraccount', [
-        'driver' => 'mysql',
-        'host' => 'localhost',
-        'database' => '3db',
-        'username' => '3user',
-        'password' => 'jVHRfOQnDQ3v',
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
-        'prefix' => '',
-        'strict' => false,
-        'engine' => null,
-        'options' => extension_loaded('pdo_mysql') ? array_filter([
-            PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        ]) : [],
-    ]);
-
-    try {
-        $modelClass = $validated['model_name'];
-
-        if (!class_exists($modelClass)) {
-            return response()->json(['error' => 'Invalid model name'], 400);
-        }
-
-        // Use the `useraccount` connection for this model
-        $modelInstance = (new $modelClass)->setConnection('useraccount');
-        $data = $validated['data'];
-        $id = $validated['id'] ?? null;
-
-        // Handle timestamps
-        $createdAt = $data['created_at'] ?? null;
-        $updatedAt = $data['updated_at'] ?? null;
-
-        if ($id) {
-            // Search by ID if provided
-            $existingRecord = $modelInstance->find($id);
-        } else {
-            // Search by UUID or unique fields if no ID
-            $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
-        }
-
-        if ($existingRecord) {
-            // Update the record
-            unset($data['id']); // Prevent ID overwrite
-            $existingRecord->timestamps = false;
-            $existingRecord->fill($data);
-            if ($createdAt) $existingRecord->created_at = $createdAt;
-            if ($updatedAt) $existingRecord->updated_at = $updatedAt;
-            $existingRecord->save();
-        } else {
-            // Insert new record
-            $newRecord = new $modelInstance($data);
-            $newRecord->timestamps = false;
-            if ($createdAt) $newRecord->created_at = $createdAt;
-            if ($updatedAt) $newRecord->updated_at = $updatedAt;
-            $newRecord->save();
-        }
-
-        return response()->json(['message' => 'Record synced successfully'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
-    }
-}
 
 
 
