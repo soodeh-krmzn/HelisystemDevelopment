@@ -572,15 +572,16 @@ class ApiController extends Controller
             // Handle data and ID
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
+            $uuid = $validated['uuid'] ?? null;
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
 
             // Fetch the existing record or create a new one
-            if ($id) {
-                $existingRecord = $modelInstance->find($id);
-            } else {
+            if ($uuid) 
                 $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
-            }
+            // } else {
+            //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            // }
 
             if ($existingRecord) {
                 // Update the existing record
