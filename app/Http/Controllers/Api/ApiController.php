@@ -590,8 +590,9 @@ class ApiController extends Controller
                 $existingRecord->save();
             } else {
                 // Insert new record
+                return response()->json($modelInstance);
                 $newRecord = new $modelInstance($data);
-                return response()->json($newRecord);
+                
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
