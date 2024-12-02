@@ -577,8 +577,10 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             // Fetch the existing record or create a new one
-            if ($uuid)
-                $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            // if ($uuid)
+            //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            // else
             // } else {
             //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
             // }
