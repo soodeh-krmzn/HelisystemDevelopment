@@ -556,6 +556,7 @@ class ApiController extends Controller
             ]) : [],
         ]);
         DB::connection('useraccount');
+
         try {
             $modelClass = $validated['model_name'];
 
@@ -566,62 +567,52 @@ class ApiController extends Controller
             // Use the `useraccount` connection for this model
             $modelInstance = (new $modelClass)->setConnection('useraccount');
 
-            $connectionName = $modelInstance->getConnectionName();
-            $connection = $modelInstance->getConnection();
-            $databaseName = $connection->getDatabaseName(); // Get the actual database name
-
-            // Return the connection details for debugging
-            return response()->json([
-                'connection_name' => $connectionName,
-                'database_name' => $databaseName,
-            ], 200);
-
-            $connectionName = $modelInstance->getConnectionName();
-            $connection = $modelInstance->getConnection();
-            $databaseName = $connection->getDatabaseName(); // Get the actual database name
-
-            // Return the connection details for debugging
-            return response()->json([
-                'connection_name' => $connectionName,
-                'database_name' => $databaseName,
-            ], 200);
+            // Handle data and ID
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
-            // Handle timestamps
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
 
+            // Fetch the existing record or create a new one
             if ($id) {
-                // Search by ID if provided
                 $existingRecord = $modelInstance->find($id);
             } else {
-                // Search by UUID or unique fields if no ID
                 $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
             }
 
             if ($existingRecord) {
-                // Update the record
+                // Update the existing record
                 unset($data['id']); // Prevent ID overwrite
                 $existingRecord->timestamps = false;
                 $existingRecord->forceFill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
-            } else {
-                // Insert new record                
-                $newRecord = new $modelInstance($data);
 
+                // Access and return the updated data
+                return response()->json([
+                    'message' => 'Record synced successfully',
+                    'data' => $existingRecord->toArray(),  // Return the updated model data
+                ], 200);
+            } else {
+                // Insert new record
+                $newRecord = new $modelClass($data);
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
                 $newRecord->save();
-            }
 
-            return response()->json(['message' => 'Record synced successfully'], 200);
+                // Access and return the newly created data
+                return response()->json([
+                    'message' => 'Record synced successfully',
+                    'data' => $newRecord->toArray(),  // Return the new model data
+                ], 200);
+            }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
         }
     }
+
 
 
 
