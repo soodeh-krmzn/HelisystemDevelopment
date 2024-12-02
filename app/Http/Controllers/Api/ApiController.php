@@ -555,7 +555,7 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
-        DB::connection('useraccount');
+        DB::setDefaultConnection('useraccount');
         try {
             $modelClass = $validated['model_name'];
 
