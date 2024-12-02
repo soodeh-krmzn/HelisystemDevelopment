@@ -567,7 +567,7 @@ class ApiController extends Controller
             $modelInstance = (new $modelClass)->setConnection('useraccount');
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
-            return response()->json($modelClass);
+            return response()->json($modelInstance);
             // Handle timestamps
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
