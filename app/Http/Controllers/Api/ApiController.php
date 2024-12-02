@@ -565,9 +565,28 @@ class ApiController extends Controller
 
             // Use the `useraccount` connection for this model
             $modelInstance = (new $modelClass)->setConnection('useraccount');
+
+            $connectionName = $modelInstance->getConnectionName();
+            $connection = $modelInstance->getConnection();
+            $databaseName = $connection->getDatabaseName(); // Get the actual database name
+
+            // Return the connection details for debugging
+            return response()->json([
+                'connection_name' => $connectionName,
+                'database_name' => $databaseName,
+            ], 200);
+
+            $connectionName = $modelInstance->getConnectionName();
+            $connection = $modelInstance->getConnection();
+            $databaseName = $connection->getDatabaseName(); // Get the actual database name
+
+            // Return the connection details for debugging
+            return response()->json([
+                'connection_name' => $connectionName,
+                'database_name' => $databaseName,
+            ], 200);
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
-            return response()->json($modelInstance);
             // Handle timestamps
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
@@ -591,7 +610,7 @@ class ApiController extends Controller
             } else {
                 // Insert new record                
                 $newRecord = new $modelInstance($data);
-                
+
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
