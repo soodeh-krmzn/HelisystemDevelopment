@@ -584,13 +584,14 @@ class ApiController extends Controller
                 // Update the record
                 unset($data['id']); // Prevent ID overwrite
                 $existingRecord->timestamps = false;
-                $existingRecord->fill($data);
+                $existingRecord->forceFill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
             } else {
                 // Insert new record
                 $newRecord = new $modelInstance($data);
+                $newRecord->forceFill($data);
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
