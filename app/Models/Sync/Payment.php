@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Person extends Sync
+class Payment extends Sync
 {
     use HasFactory, SoftDeletes;
 

@@ -558,6 +558,7 @@ class ApiController extends Controller
 
             // Fetch the existing record or create a new one
             $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
+            return response()->json(['warning' => $existingRecord], 400);
 
             if ($existingRecord) {
                 unset($data['id']);
@@ -568,7 +569,7 @@ class ApiController extends Controller
                 $existingRecord->save();
 
                 return response()->json([
-                    'message' => 'Record synced successfully',
+                    'message' => 'Record synced updated',
                     'data' => $existingRecord->toArray(),
                 ], 200);
             } else {                
