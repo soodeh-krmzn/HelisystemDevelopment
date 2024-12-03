@@ -562,6 +562,8 @@ class ApiController extends Controller
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
 
+            return response()->json(['warning' => $modelClass], 400);
+
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
             }
@@ -577,7 +579,7 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             // Fetch the existing record or create a new one
-            $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
+            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
             // if ($uuid)
             //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
             // else
