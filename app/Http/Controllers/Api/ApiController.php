@@ -549,7 +549,7 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');            
-
+            return response()->json(['warning' => 'its here'], 400);
             // Handle data and ID
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
@@ -560,8 +560,7 @@ class ApiController extends Controller
             // Fetch the existing record or create a new one
             $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();           
 
-            if ($existingRecord) {
-                return response()->json(['warning' => 'its here'], 400);
+            if ($existingRecord) {                
                 unset($data['id']);
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
