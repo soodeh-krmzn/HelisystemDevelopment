@@ -527,6 +527,7 @@ class ApiController extends Controller
         $validated = $request->validate([
             'model_name' => 'required|string',
             'id' => 'nullable|integer',
+            'm_uuid' => 'nullable|integer',
             'data' => 'required|array',
         ]);
 
