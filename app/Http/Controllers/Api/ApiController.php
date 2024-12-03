@@ -537,7 +537,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-
+        return response()->json(['warning' => 'its here'], 400);
         try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -545,8 +545,7 @@ class ApiController extends Controller
 
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
-            }
-            return response()->json(['warning' => 'its here'], 400);
+            }            
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');                        
             // Handle data and ID
