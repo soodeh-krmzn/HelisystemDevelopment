@@ -567,8 +567,7 @@ class ApiController extends Controller
             }
 
             $modelInstance = new $modelClass;
-            $modelInstance->setConnection('useraccount');
-            return response()->json(['warning' => $modelInstance], 400);
+            $modelInstance->setConnection('useraccount');            
 
             // Handle data and ID
             $data = $validated['data'];
@@ -600,6 +599,7 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
+                return response()->json(['warning' => $newRecord], 400);
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
