@@ -526,7 +526,7 @@ class ApiController extends Controller
     {       
         $validated = $request->validate([
             'model_name' => 'required|string',
-            'id' => 'nullable|integer',
+            'm_id' => 'nullable|integer',
             'm_uuid' => 'nullable|string',
             'data' => 'required|array',
         ]);
@@ -548,7 +548,7 @@ class ApiController extends Controller
             $modelInstance->setConnection('useraccount');                        
             // Handle data and ID
             $data = $validated['data'];
-            $id = $validated['id'] ?? null;
+            $id = $validated['m_id'] ?? null;
             $uuid = $validated['m_uuid'] ?? null;
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
