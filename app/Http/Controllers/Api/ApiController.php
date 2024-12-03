@@ -523,15 +523,14 @@ class ApiController extends Controller
     }
 
     public function storeSyncData(Request $request)
-    {
-        return response()->json(['warning' => 'its here'], 400);
+    {       
         $validated = $request->validate([
             'model_name' => 'required|string',
             'id' => 'nullable|integer',
             'm_uuid' => 'nullable|integer',
             'data' => 'required|array',
         ]);
-
+        return response()->json(['warning' => 'its here'], 400);
         $accountId = 3;
         $account = Account::find($accountId);
 
