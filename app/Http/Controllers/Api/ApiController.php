@@ -546,10 +546,9 @@ class ApiController extends Controller
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
             }
-
-            $modelInstance = new $modelClass;
-            $modelInstance->setConnection('useraccount');            
             return response()->json(['warning' => 'its here'], 400);
+            $modelInstance = new $modelClass;
+            $modelInstance->setConnection('useraccount');                        
             // Handle data and ID
             $data = $validated['data'];
             $id = $validated['id'] ?? null;
