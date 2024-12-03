@@ -95,50 +95,50 @@ class ChangeLogController extends Controller
         $account = Account::findOrFail('3');
         // foreach ($accounts  as $account) {
 
-            DB::purge('mysql');
-            Config::set('database.connections.mysql', [
-                'driver' => 'mysql',
-                'host' => 'localhost',
-                'database' => $account->id . 'db',
-                'username' => 'root',
-                'password' => 'v8F7MPy24gFwLizqU05Jqu1l',
-                'charset' => 'utf8mb4',
-                'collation' => 'utf8mb4_unicode_ci',
-                'prefix' => '',
-                'prefix_indexes' => true,
-                'strict' => false,
-                'engine' => null,
-                'options' => extension_loaded('pdo_mysql') ? array_filter([
-                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                ]) : [],
-            ]);
-            try {
-                DB::connection()->getPdo();
-                if (DB::connection()->getDatabaseName()) {
-                    echo 'ok';
-                } else {
-                    dump('one');
-                    // abort(500, "خطای پیکربندی! لطفا با پشتیبان سیستم تماس بگیرید.");
-                }
-            } catch (\Exception $e) {
-                dump($e->getMessage());
-                // abort(500, "خطای پیکربندی! لطفا با پشتیبان سیستم تماس بگیرید. " . $e->getMessage());
+        DB::purge('mysql');
+        Config::set('database.connections.mysql', [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => '3db',
+            'username' => '3user',
+            'password' => 'jVHRfOQnDQ3v',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ]);
+        try {
+            DB::connection()->getPdo();
+            if (DB::connection()->getDatabaseName()) {
+                echo 'ok';
+            } else {
+                dump('one');
+                // abort(500, "خطای پیکربندی! لطفا با پشتیبان سیستم تماس بگیرید.");
             }
-            try {
-                DB::beginTransaction();
-                // DB::statement("
-                //    ALTER TABLE `sections` ADD `type` VARCHAR(11) NOT NULL DEFAULT 'waterfall' AFTER `name`;
-                // ");
+        } catch (\Exception $e) {
+            dump($e->getMessage());
+            // abort(500, "خطای پیکربندی! لطفا با پشتیبان سیستم تماس بگیرید. " . $e->getMessage());
+        }
+        try {
+            DB::beginTransaction();
+            // DB::statement("
+            //    ALTER TABLE `sections` ADD `type` VARCHAR(11) NOT NULL DEFAULT 'waterfall' AFTER `name`;
+            // ");
 
-                //To add UUID for table
-                DB::statement("ALTER TABLE `people` ADD `uuid` CHAR(36) NULL UNIQUE AFTER `id`");
-                DB::statement("UPDATE `people` SET `uuid` = (UUID())");
-                
-                DB::commit();
-            } catch (\Throwable $th) {
-                DB::rollBack();
-                dump($th->getMessage());
-            }
+            //To add UUID for table
+            DB::statement("ALTER TABLE `people` ADD `uuid` CHAR(36) NULL UNIQUE AFTER `id`");
+            DB::statement("UPDATE `people` SET `uuid` = (UUID())");
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dump($th->getMessage());
+        }
         // }
     }
 }

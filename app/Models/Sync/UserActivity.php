@@ -18,7 +18,9 @@ class UserActivity extends Sync
         parent::boot();
 
         static::creating(function ($model) {
-            $model->uuid = (string) Str::uuid();
+            if (!$model->uuid) {
+                $model->uuid = (string) Str::uuid();
+            }
         });
     }
 }
