@@ -568,7 +568,7 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
-            return response()->json(['warning' => $modelClass], 400);
+            return response()->json(['warning' => $modelInstance], 400);
 
             // Handle data and ID
             $data = $validated['data'];
