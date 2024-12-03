@@ -598,8 +598,8 @@ class ApiController extends Controller
                     'data' => $existingRecord->toArray(),
                 ], 200);
             } else {
-                $newRecord = new $modelClass($data);
-                return response()->json(['warning' => $newRecord], 400);
+                return response()->json(['warning' => $existingRecord], 400);
+                $newRecord = new $modelClass($data);                
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
