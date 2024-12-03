@@ -555,8 +555,9 @@ class ApiController extends Controller
 
             // Fetch the existing record or create a new one
             $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();           
+            return response()->json(['warning' => $existingRecord], status: 400);
 
-            if ($existingRecord) {                
+            if ($existingRecord) {                                
                 unset($data['id']);
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
