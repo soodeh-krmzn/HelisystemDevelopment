@@ -524,6 +524,7 @@ class ApiController extends Controller
 
     public function storeSyncData(Request $request)
     {
+        return response()->json(['warning' => 'its here'], 400);
         $validated = $request->validate([
             'model_name' => 'required|string',
             'id' => 'nullable|integer',
@@ -536,8 +537,7 @@ class ApiController extends Controller
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
-        }
-        return response()->json(['warning' => 'its here'], 400);
+        }        
         try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
