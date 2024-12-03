@@ -537,26 +537,6 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        // Configure database connection
-        // DB::purge('useraccount');
-        // Config::set('database.connections.useraccount', [
-        //     'driver' => 'mysql',
-        //     'host' => 'localhost',
-        //     'database' => '3db',
-        //     'username' => '3user',
-        //     'password' => 'jVHRfOQnDQ3v',
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        //     'strict' => false,
-        //     'engine' => null,
-        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        //     ]) : [],
-        // ]);
-        // DB::connection('useraccount');
-
-
         try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -578,12 +558,6 @@ class ApiController extends Controller
 
             // Fetch the existing record or create a new one
             $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
-            // if ($uuid)
-            //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
-            // else
-            // } else {
-            //     $existingRecord = $modelInstance->where('uuid', $data['uuid'] ?? null)->first();
-            // }
 
             if ($existingRecord) {
                 unset($data['id']);
@@ -597,8 +571,7 @@ class ApiController extends Controller
                     'message' => 'Record synced successfully',
                     'data' => $existingRecord->toArray(),
                 ], 200);
-            } else {
-                return response()->json(['warning' => $existingRecord], 400);
+            } else {                
                 $newRecord = new $modelClass($data);                
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
