@@ -558,10 +558,10 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             // Fetch the existing record or create a new one
-            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
-            return response()->json(['warning' => $existingRecord], 400);
+            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();           
 
             if ($existingRecord) {
+                return response()->json(['warning' => 'its here'], 400);
                 unset($data['id']);
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
