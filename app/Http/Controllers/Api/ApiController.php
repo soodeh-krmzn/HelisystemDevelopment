@@ -523,29 +523,30 @@ class ApiController extends Controller
     }
 
     public function storeSyncData(Request $request)
-    {       
+    {
         $validated = $request->validate([
             'model_name' => 'required|string',
             'm_id' => 'nullable|integer',
             'm_uuid' => 'nullable|string',
             'data' => 'required|array',
+            'includes' => 'nullable|array',
         ]);
         $accountId = 3;
         $account = Account::find($accountId);
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
-        }        
+        }
         try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
-            $modelClass = "App\\Models\\Sync\\{$modelName}";            
+            $modelClass = "App\\Models\\Sync\\{$modelName}";
 
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
-            }            
+            }
             $modelInstance = new $modelClass;
-            $modelInstance->setConnection('useraccount');                        
+            $modelInstance->setConnection('useraccount');
             // Handle data and ID
             $data = $validated['data'];
             $id = $validated['m_id'] ?? null;
@@ -554,9 +555,9 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             // Fetch the existing record or create a new one
-            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();           
+            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
 
-            if ($existingRecord) {                                
+            if ($existingRecord) {
                 unset($data['id']);
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
@@ -568,8 +569,12 @@ class ApiController extends Controller
                     'message' => 'Record synced updated',
                     'data' => $existingRecord->toArray(),
                 ], 200);
-            } else {                
-                $newRecord = new $modelClass($data);                
+            } else {
+                $newRecord = new $modelClass($data);
+                if ($modelClass == 'Factor') {
+                    $newRecord->game= $request->includes['Game'];
+                    $newRecord->person= $request->includes['Person'];
+                }
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
