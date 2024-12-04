@@ -563,19 +563,7 @@ class ApiController extends Controller
 
                 // Sync the Person and Game if applicable
                 if ($modelClass === 'App\\Models\\Sync\\Factor') {
-                    if (isset($request->includes['Person'])) {
-                        $personData = $request->includes['Person'];
-                        $personModel = "App\\Models\\Sync\\Person";
-                        $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
-            
-                        if (!$personInstance) {
-                            $personInstance = $personModel::on('useraccount')->create($personData);
-                        }
-            
-                        $existingRecord->person_id = $personInstance->id;
-                        return response()->json(['test' => $existingRecord], 500);
-                    }
-                    // $this->syncFactor($existingRecord, $request);
+                    $existingRecord = $this->syncFactor($existingRecord, $request);
                 }
 
                 $existingRecord->timestamps = false;
@@ -625,7 +613,7 @@ class ApiController extends Controller
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
 
-            $record->person_id = $personInstance->id;
+            $record->person_id = $personInstance->id; 
         }
 
         if (isset($request->includes['Game'])) {
@@ -639,6 +627,9 @@ class ApiController extends Controller
 
             $record->game_id = $gameInstance->id;
         }
+        unset($record['person_id']);
+        unset($record['game_id']);
+        return $record;
     }
 
 
