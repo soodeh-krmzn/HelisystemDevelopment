@@ -536,7 +536,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        try {            
+        try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
@@ -570,31 +570,16 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                if ($modelClass == 'App\\Models\\Sync\\Factor') {                    
-                    if (isset($request->includes['Person'])) {
-                        $personData = $request->includes['Person'];
-                        $personModel = "App\\Models\\Sync\\Person";
-                        $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+                switch ($modelClass) {
+                    case 'App\\Models\\Sync\\Factor':
+                        $newRecord = $this->syncFactor($newRecord, $request);
+                        break;
 
-                        if (!$personInstance) {
-                            $personInstance = $personModel::create($personData); // Save new person
-                        }
-
-                        $newRecord->person_id = $personInstance->id; // Set person_id in Factor
-                    }
-
-                    if (isset($request->includes['Game'])) {
-                        $gameData = $request->includes['Game'];
-                        $gameModel = "App\\Models\\Sync\\Game";
-                        $gameInstance = $gameModel::where('uuid', $gameData['uuid'])->first();
-
-                        if (!$gameInstance) {
-                            $gameInstance = $gameModel::create($gameData); // Save new game
-                        }
-
-                        $newRecord->game_id = $gameInstance->id; // Set game_id in Factor
-                    }
+                    case 'App\\Models\\Sync\\Game':
+                        $newRecord = $this->syncGame($newRecord, $request);
+                        break;
                 }
+
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
@@ -611,7 +596,50 @@ class ApiController extends Controller
     }
 
 
+    public function syncFactor($newRecord, $request)
+    {
+        if (isset($request->includes['Person'])) {
+            $personData = $request->includes['Person'];
+            $personModel = "App\\Models\\Sync\\Person";
+            $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
 
+            if (!$personInstance) {
+                $personInstance = $personModel::create($personData);
+            }
+
+            $newRecord->person_id = $personInstance->id;
+        }
+
+        if (isset($request->includes['Game'])) {
+            $gameData = $request->includes['Game'];
+            $gameModel = "App\\Models\\Sync\\Game";
+            $gameInstance = $gameModel::where('uuid', $gameData['uuid'])->first();
+
+            if (!$gameInstance) {
+                $gameInstance = $gameModel::create($gameData);
+            }
+
+            $newRecord->game_id = $gameInstance->id;
+        }
+        return $newRecord;
+    }
+
+    public function syncGame($newRecord, $request)
+    {
+        if (isset($request->includes['Person'])) {
+            $personData = $request->includes['Person'];
+            $personModel = "App\\Models\\Sync\\Person";
+            $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+
+            if (!$personInstance) {
+                $personInstance = $personModel::create($personData);
+            }
+
+            $newRecord->person_id = $personInstance->id;
+        }
+
+        return $newRecord;
+    }
 
     // public function storeSyncData(Request $request)
     // {
