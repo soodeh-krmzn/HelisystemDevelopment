@@ -538,6 +538,9 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
         try {
+            return response()->json([
+                'message' => 'test',
+            ], 200);
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
@@ -571,11 +574,7 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                if ($modelClass == 'App\\Models\\Sync\\Factor') {
-                    return response()->json([
-                        'message' => 'test',
-                        'data' => $existingRecord->toArray(),
-                    ], 200);
+                if ($modelClass == 'App\\Models\\Sync\\Factor') {                    
                     if (isset($request->includes['Person'])) {
                         $personData = $request->includes['Person'];
                         $personModel = "App\\Models\\Sync\\Person";
