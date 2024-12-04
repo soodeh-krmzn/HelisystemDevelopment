@@ -560,12 +560,23 @@ class ApiController extends Controller
 
             if ($existingRecord) {
                 unset($data['id']);
+                switch ($modelClass) {
+                    case 'App\\Models\\Sync\\Factor':
+                        $existingRecord = $this->syncFactor($existingRecord, $request);
+                        unset($data['person_id'], $data['game_id']);
+                        break;
 
-                // Sync the Person and Game if applicable
-                if ($modelClass === 'App\\Models\\Sync\\Factor') {
-                    $existingRecord = $this->syncFactor($existingRecord, $request);
-                    unset($data['person_id'], $data['game_id']);
-                }                
+                    case 'App\\Models\\Sync\\FactorBody':
+                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        unset($data['factor_id'], $data['product_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\Game':
+                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        unset($data['person_id'], $data['game_id']);
+                        break;
+                }
+
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
@@ -582,6 +593,11 @@ class ApiController extends Controller
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
+                        break;
+
+                    case 'App\\Models\\Sync\\FactorBody':
+                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        unset($data['factor_id'], $data['product_id']);
                         break;
 
                     case 'App\\Models\\Sync\\Game':
@@ -607,28 +623,105 @@ class ApiController extends Controller
         if (isset($request->includes['Person'])) {
             $personData = $request->includes['Person'];
             $personModel = "App\\Models\\Sync\\Person";
+
             $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
 
-            if (!$personInstance) {
+            if ($personInstance) {
+                $personInstance->timestamps = false;
+                $personInstance->fill($personData);
+                if (isset($personData['created_at'])) {
+                    $personInstance->created_at = $personData['created_at'];
+                }
+                if (isset($personData['updated_at'])) {
+                    $personInstance->updated_at = $personData['updated_at'];
+                }
+                $personInstance->save();
+            } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
 
-            $record->person_id = $personInstance->id; 
+            $record->person_id = $personInstance->id;
         }
 
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
+
             $gameInstance = $gameModel::on('useraccount')->where('uuid', $gameData['uuid'])->first();
 
-            if (!$gameInstance) {
+            if ($gameInstance) {
+                $gameInstance->timestamps = false;
+                $gameInstance->fill($gameData);
+                if (isset($gameData['created_at'])) {
+                    $gameInstance->created_at = $gameData['created_at'];
+                }
+                if (isset($gameData['updated_at'])) {
+                    $gameInstance->updated_at = $gameData['updated_at'];
+                }
+                $gameInstance->save();
+            } else {
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
 
             $record->game_id = $gameInstance->id;
         }
+
         return $record;
     }
+
+
+    public function syncFactorBody($record, $request)
+    {
+        if (isset($request->includes['Factor'])) {
+            $factorData = $request->includes['Factor'];
+            $factorModel = "App\\Models\\Sync\\Factor";
+
+            $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
+
+            if ($factorInstance) {
+                $factorInstance->timestamps = false;
+                $factorInstance->fill($factorData);
+                if (isset($factorData['created_at'])) {
+                    $factorInstance->created_at = $factorData['created_at'];
+                }
+                if (isset($factorData['updated_at'])) {
+                    $factorInstance->updated_at = $factorData['updated_at'];
+                }
+                $factorInstance->save();
+            } else {
+                $factorInstance = $factorModel::on('useraccount')->create($factorData);
+            }
+
+            $record->factor_id = $factorInstance->id;
+        }
+
+        if (isset($request->includes['Product'])) {
+            $productData = $request->includes['Product'];
+            $productModel = "App\\Models\\Sync\\Product";
+
+            $productInstance = $productModel::on('useraccount')->where('uuid', $productData['uuid'])->first();
+
+            if ($productInstance) {
+                $productInstance->timestamps = false;
+                $productInstance->fill($productData);
+                if (isset($productData['created_at'])) {
+                    $productInstance->created_at = $productData['created_at'];
+                }
+                if (isset($productData['updated_at'])) {
+                    $productInstance->updated_at = $productData['updated_at'];
+                }
+                $productInstance->save();
+            } else {
+                $productInstance = $productModel::on('useraccount')->create($productData);
+            }
+
+            $record->product_id = $productInstance->id;
+        }
+
+        return $record;
+    }
+
+
 
 
     public function syncPerson($personData)
