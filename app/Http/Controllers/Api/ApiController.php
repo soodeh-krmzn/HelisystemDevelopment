@@ -596,8 +596,9 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\FactorBody':
-                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
                         return response()->json([$existingRecord], 200);
+                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        
                         unset( $data['product_id']);
                         break;
 
