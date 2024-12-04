@@ -606,17 +606,27 @@ class ApiController extends Controller
     {
         if (isset($request->includes['Person'])) {
             $personData = $request->includes['Person'];
-            $personInstance = $this->syncPerson($personData);
+            $personModel = "App\\Models\\Sync\\Person";
+            $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
+
+            if (!$personInstance) {
+                $personInstance = $personModel::on('useraccount')->create($personData);
+            }
+
             $record->person_id = $personInstance->id;
         }
 
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
-            $gameInstance = $this->syncGameEntity($gameData);
+            $gameModel = "App\\Models\\Sync\\Game";
+            $gameInstance = $gameModel::on('useraccount')->where('uuid', $gameData['uuid'])->first();
+
+            if (!$gameInstance) {
+                $gameInstance = $gameModel::on('useraccount')->create($gameData);
+            }
+
             $record->game_id = $gameInstance->id;
         }
-
-        return $record;
     }
 
 
