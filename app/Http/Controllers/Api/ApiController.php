@@ -560,13 +560,22 @@ class ApiController extends Controller
 
             if ($existingRecord) {
                 unset($data['id']);
+
+                // Sync the Person and Game if applicable
+                if ($modelClass === 'App\\Models\\Sync\\Factor') {
+                    $existingRecord = $this->syncFactor($existingRecord, $request);
+                }
+
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
 
-                return response()->json(['message' => 'Record synced updated', 'data' => $existingRecord->toArray()], 200);
+                return response()->json([
+                    'message' => 'Record synced updated',
+                    'data' => $existingRecord->toArray(),
+                ], 200);
             } else {
                 $newRecord = new $modelClass($data);
 
@@ -589,26 +598,27 @@ class ApiController extends Controller
             }
         } catch (\Exception $e) {
             Log::error("Sync failed: " . $e->getMessage());
-            return response()->json(['error' => 'Failed to sync data'. $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to sync data' . $e->getMessage()], 500);
         }
     }
 
-    public function syncFactor($newRecord, $request)
+    public function syncFactor($record, $request)
     {
         if (isset($request->includes['Person'])) {
             $personData = $request->includes['Person'];
             $personInstance = $this->syncPerson($personData);
-            $newRecord->person_id = $personInstance->id;
+            $record->person_id = $personInstance->id;
         }
 
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
             $gameInstance = $this->syncGameEntity($gameData);
-            $newRecord->game_id = $gameInstance->id;
+            $record->game_id = $gameInstance->id;
         }
 
-        return $newRecord;
+        return $record;
     }
+
 
     public function syncPerson($personData)
     {
