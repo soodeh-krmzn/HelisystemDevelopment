@@ -692,7 +692,7 @@ class ApiController extends Controller
             //     $factorInstance = $factorModel::on('useraccount')->create($factorData);
             // }
 
-            $record->factor_id = $request->includes['Factor']->id;
+            $record->factor_id = $request->includes['Factor']['id'];
         }
 
         if (isset($request->includes['Product'])) {
