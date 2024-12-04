@@ -672,28 +672,28 @@ class ApiController extends Controller
 
     public function syncFactorBody($record, $request)
     {
-        // if (isset($request->includes['Factor'])) {
-        //     $factorData = $request->includes['Factor'];
-        //     $factorModel = "App\\Models\\Sync\\Factor";
+        if (isset($request->includes['Factor'])) {
+            // $factorData = $request->includes['Factor'];
+            // $factorModel = "App\\Models\\Sync\\Factor";
 
-        //     $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
+            // $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
 
-        //     if ($factorInstance) {
-        //         $factorInstance->timestamps = false;
-        //         $factorInstance->fill($factorData);
-        //         if (isset($factorData['created_at'])) {
-        //             $factorInstance->created_at = $factorData['created_at'];
-        //         }
-        //         if (isset($factorData['updated_at'])) {
-        //             $factorInstance->updated_at = $factorData['updated_at'];
-        //         }
-        //         $factorInstance->save();
-        //     } else {
-        //         $factorInstance = $factorModel::on('useraccount')->create($factorData);
-        //     }
+            // if ($factorInstance) {
+            //     $factorInstance->timestamps = false;
+            //     $factorInstance->fill($factorData);
+            //     if (isset($factorData['created_at'])) {
+            //         $factorInstance->created_at = $factorData['created_at'];
+            //     }
+            //     if (isset($factorData['updated_at'])) {
+            //         $factorInstance->updated_at = $factorData['updated_at'];
+            //     }
+            //     $factorInstance->save();
+            // } else {
+            //     $factorInstance = $factorModel::on('useraccount')->create($factorData);
+            // }
 
-        //     $record->factor_id = $factorInstance->id;
-        // }
+            $record->factor_id = $request->includes['Factor']->id;
+        }
 
         if (isset($request->includes['Product'])) {
             $productData = $request->includes['Product'];
