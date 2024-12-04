@@ -530,12 +530,14 @@ class ApiController extends Controller
             'm_uuid' => 'nullable|string',
             'data' => 'required|array',
         ]);
+
         $accountId = 3;
         $account = Account::find($accountId);
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
+
         try {
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -544,17 +546,17 @@ class ApiController extends Controller
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
             }
+
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
-            // Handle data and ID
+
             $data = $validated['data'];
             $id = $validated['m_id'] ?? null;
             $uuid = $validated['m_uuid'] ?? null;
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
 
-            // Fetch the existing record or create a new one
-            $existingRecord = $modelInstance->where('uuid', $uuid ?? null)->first();
+            $existingRecord = $modelInstance->where('uuid', $uuid)->first();
 
             if ($existingRecord) {
                 unset($data['id']);
@@ -564,12 +566,10 @@ class ApiController extends Controller
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
 
-                return response()->json([
-                    'message' => 'Record synced updated',
-                    'data' => $existingRecord->toArray(),
-                ], 200);
+                return response()->json(['message' => 'Record synced updated', 'data' => $existingRecord->toArray()], 200);
             } else {
                 $newRecord = new $modelClass($data);
+
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
@@ -585,61 +585,65 @@ class ApiController extends Controller
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
                 $newRecord->save();
 
-                return response()->json([
-                    'message' => 'Record synced successfully',
-                    'data' => $newRecord->toArray(),
-                ], 200);
+                return response()->json(['message' => 'Record synced successfully', 'data' => $newRecord->toArray()], 200);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
+            \Log::error("Sync failed: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to sync data'], 500);
         }
     }
-
 
     public function syncFactor($newRecord, $request)
     {
         if (isset($request->includes['Person'])) {
             $personData = $request->includes['Person'];
-            $personModel = "App\\Models\\Sync\\Person";
-            $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
-
-            if (!$personInstance) {
-                $personInstance = $personModel::create($personData);
-            }
-
+            $personInstance = $this->syncPerson($personData);
             $newRecord->person_id = $personInstance->id;
         }
 
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
-            $gameModel = "App\\Models\\Sync\\Game";
-            $gameInstance = $gameModel::where('uuid', $gameData['uuid'])->first();
-
-            if (!$gameInstance) {
-                $gameInstance = $gameModel::create($gameData);
-            }
-
+            $gameInstance = $this->syncGameEntity($gameData);
             $newRecord->game_id = $gameInstance->id;
         }
+
         return $newRecord;
     }
 
-    public function syncGame($newRecord, $request)
+    public function syncPerson($personData)
     {
-        if (isset($request->includes['Person'])) {
-            $personData = $request->includes['Person'];
-            $personModel = "App\\Models\\Sync\\Person";
-            $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+        $personModel = "App\\Models\\Sync\\Person";
 
-            if (!$personInstance) {
-                $personInstance = $personModel::create($personData);
-            }
-
-            $newRecord->person_id = $personInstance->id;
+        if (!class_exists($personModel)) {
+            throw new \Exception("Person model not found");
         }
 
-        return $newRecord;
+        $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+
+        if (!$personInstance) {
+            $personInstance = $personModel::create($personData);
+        }
+
+        return $personInstance;
     }
+
+    public function syncGameEntity($gameData)
+    {
+        $gameModel = "App\\Models\\Sync\\Game";
+
+        if (!class_exists($gameModel)) {
+            throw new \Exception("Game model not found");
+        }
+
+        $gameInstance = $gameModel::where('uuid', $gameData['uuid'])->first();
+
+        if (!$gameInstance) {
+            $gameInstance = $gameModel::create($gameData);
+        }
+
+        return $gameInstance;
+    }
+
 
     // public function storeSyncData(Request $request)
     // {
