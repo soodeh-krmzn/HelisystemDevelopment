@@ -596,9 +596,9 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\FactorBody':
-                        return response()->json([$existingRecord], 200);
-                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
                         
+                        $newRecord = $this->syncFactorBody($newRecord, $request);
+                        return response()->json([$newRecord], 200);
                         unset( $data['product_id']);
                         break;
 
@@ -673,8 +673,7 @@ class ApiController extends Controller
 
 
     public function syncFactorBody($record, $request)
-    {
-        return $record;
+    {        
         if (isset($request->includes['Factor'])) {
             // $factorData = $request->includes['Factor'];
             // $factorModel = "App\\Models\\Sync\\Factor";
