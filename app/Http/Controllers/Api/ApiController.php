@@ -588,8 +588,8 @@ class ApiController extends Controller
                 return response()->json(['message' => 'Record synced successfully', 'data' => $newRecord->toArray()], 200);
             }
         } catch (\Exception $e) {
-            \Log::error("Sync failed: " . $e->getMessage());
-            return response()->json(['error' => 'Failed to sync data'], 500);
+            Log::error("Sync failed: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to sync data'. $e->getMessage()], 500);
         }
     }
 
