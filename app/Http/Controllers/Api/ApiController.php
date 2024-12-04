@@ -564,13 +564,13 @@ class ApiController extends Controller
                 // Sync the Person and Game if applicable
                 if ($modelClass === 'App\\Models\\Sync\\Factor') {
                     $existingRecord = $this->syncFactor($existingRecord, $request);
+                    unset($data['person_id'], $data['game_id']);
                 }                
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
                 $existingRecord->save();
-                return response()->json(['error' => $existingRecord], 400);
 
                 return response()->json([
                     'message' => 'Record synced updated',
@@ -627,8 +627,6 @@ class ApiController extends Controller
 
             $record->game_id = $gameInstance->id;
         }
-        unset($record['person_id']);
-        unset($record['game_id']);
         return $record;
     }
 
