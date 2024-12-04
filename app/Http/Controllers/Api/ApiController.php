@@ -673,6 +673,7 @@ class ApiController extends Controller
 
     public function syncFactorBody($record, $request)
     {
+        return $record;
         if (isset($request->includes['Factor'])) {
             // $factorData = $request->includes['Factor'];
             // $factorModel = "App\\Models\\Sync\\Factor";
@@ -715,7 +716,7 @@ class ApiController extends Controller
             } else {
                 $productInstance = $productModel::on('useraccount')->create($productData);
             }
-            return $record;
+            
             $record->product_id = $productInstance->id;
         }
 
