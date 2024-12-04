@@ -569,8 +569,8 @@ class ApiController extends Controller
                 $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
                 if ($updatedAt) $existingRecord->updated_at = $updatedAt;
-                return response()->json(['error' => $existingRecord], 400);
                 $existingRecord->save();
+                return response()->json(['error' => $existingRecord], 400);
 
                 return response()->json([
                     'message' => 'Record synced updated',
