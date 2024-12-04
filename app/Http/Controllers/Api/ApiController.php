@@ -597,7 +597,7 @@ class ApiController extends Controller
 
                     case 'App\\Models\\Sync\\FactorBody':
                         $existingRecord = $this->syncFactorBody($existingRecord, $request);
-                        unset($data['factor_id'], $data['product_id']);
+                        unset( $data['product_id']);
                         break;
 
                     case 'App\\Models\\Sync\\Game':
@@ -692,7 +692,7 @@ class ApiController extends Controller
             //     $factorInstance = $factorModel::on('useraccount')->create($factorData);
             // }
 
-            $record->factor_id = $request->includes['Factor']['id'];
+            // $record->factor_id = $factorInstance->id;
         }
 
         if (isset($request->includes['Product'])) {
