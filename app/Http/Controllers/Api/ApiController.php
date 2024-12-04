@@ -565,7 +565,7 @@ class ApiController extends Controller
                 if ($modelClass === 'App\\Models\\Sync\\Factor') {
                     $existingRecord = $this->syncFactor($existingRecord, $request);
                 }
-
+                return response()->json(['error' => $existingRecord], 400);
                 $existingRecord->timestamps = false;
                 $existingRecord->fill($data);
                 if ($createdAt) $existingRecord->created_at = $createdAt;
