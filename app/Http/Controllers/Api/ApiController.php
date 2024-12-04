@@ -597,7 +597,6 @@ class ApiController extends Controller
 
                     case 'App\\Models\\Sync\\FactorBody':
                         $existingRecord = $this->syncFactorBody($existingRecord, $request);
-                        return response()->json(['message' => $existingRecord], 200);
                         unset( $data['product_id']);
                         break;
 
@@ -700,7 +699,7 @@ class ApiController extends Controller
             $productData = $request->includes['Product'];
             $productModel = "App\\Models\\Sync\\Product";
 
-            $productInstance = $productModel::on('useraccount')->where('uuid', $productData['uuid'])->first();
+            $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
 
             if ($productInstance) {
                 $productInstance->timestamps = false;
@@ -715,8 +714,6 @@ class ApiController extends Controller
             } else {
                 $productInstance = $productModel::on('useraccount')->create($productData);
             }
-            return $productInstance;
-
             $record->product_id = $productInstance->id;
         }
 
