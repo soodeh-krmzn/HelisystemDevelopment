@@ -571,9 +571,30 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                if ($modelClass == 'Factor') {
-                    $newRecord->game= $request->includes['Game'];
-                    $newRecord->person= $request->includes['Person'];
+                if ($modelClass == 'App\\Models\\Sync\\Factor') {
+                    if (isset($request->includes['Person'])) {
+                        $personData = $request->includes['Person'];
+                        $personModel = "App\\Models\\Sync\\Person";
+                        $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+
+                        if (!$personInstance) {
+                            $personInstance = $personModel::create($personData); // Save new person
+                        }
+
+                        $newRecord->person_id = $personInstance->id; // Set person_id in Factor
+                    }
+
+                    if (isset($request->includes['Game'])) {
+                        $gameData = $request->includes['Game'];
+                        $gameModel = "App\\Models\\Sync\\Game";
+                        $gameInstance = $gameModel::where('uuid', $gameData['uuid'])->first();
+
+                        if (!$gameInstance) {
+                            $gameInstance = $gameModel::create($gameData); // Save new game
+                        }
+
+                        $newRecord->game_id = $gameInstance->id; // Set game_id in Factor
+                    }
                 }
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
