@@ -715,7 +715,7 @@ class ApiController extends Controller
             } else {
                 $productInstance = $productModel::on('useraccount')->create($productData);
             }
-            return $record->product_id;
+            return $record;
             $record->product_id = $productInstance->id;
         }
 
