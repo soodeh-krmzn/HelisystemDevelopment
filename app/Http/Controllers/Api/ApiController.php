@@ -529,7 +529,6 @@ class ApiController extends Controller
             'm_id' => 'nullable|integer',
             'm_uuid' => 'nullable|string',
             'data' => 'required|array',
-            'includes' => 'nullable|array',
         ]);
         $accountId = 3;
         $account = Account::find($accountId);
@@ -537,10 +536,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        try {
-            return response()->json([
-                'message' => 'test',
-            ], 200);
+        try {            
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
