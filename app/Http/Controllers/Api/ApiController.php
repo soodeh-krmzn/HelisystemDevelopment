@@ -563,7 +563,7 @@ class ApiController extends Controller
 
                 // Sync the Person and Game if applicable
                 if ($modelClass === 'App\\Models\\Sync\\Factor') {
-                    $existingRecord = $this->syncFactor($existingRecord, $request);
+                    $this->syncFactor($existingRecord, $request);
                 }
 
                 $existingRecord->timestamps = false;
