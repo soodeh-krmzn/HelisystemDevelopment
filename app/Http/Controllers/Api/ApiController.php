@@ -572,6 +572,10 @@ class ApiController extends Controller
             } else {
                 $newRecord = new $modelClass($data);
                 if ($modelClass == 'App\\Models\\Sync\\Factor') {
+                    return response()->json([
+                        'message' => 'test',
+                        'data' => $existingRecord->toArray(),
+                    ], 200);
                     if (isset($request->includes['Person'])) {
                         $personData = $request->includes['Person'];
                         $personModel = "App\\Models\\Sync\\Person";
