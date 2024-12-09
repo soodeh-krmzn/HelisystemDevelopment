@@ -702,18 +702,24 @@ class ApiController extends Controller
 
             $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
 
+            // if ($factorInstance) {
+            //     $factorInstance->timestamps = false;
+            //     $factorInstance->fill($factorData);
+            //     if (isset($factorData['created_at'])) {
+            //         $factorInstance->created_at = $factorData['created_at'];
+            //     }
+            //     if (isset($factorData['updated_at'])) {
+            //         $factorInstance->updated_at = $factorData['updated_at'];
+            //     }
+            //     $factorInstance->save();
+            // } else {
+            //     $factorInstance = $factorModel::on('useraccount')->create($factorData);
+            // }
             if ($factorInstance) {
-                $factorInstance->timestamps = false;
-                $factorInstance->fill($factorData);
-                if (isset($factorData['created_at'])) {
-                    $factorInstance->created_at = $factorData['created_at'];
-                }
-                if (isset($factorData['updated_at'])) {
-                    $factorInstance->updated_at = $factorData['updated_at'];
-                }
-                $factorInstance->save();
+                $factorBodyData['factor_id'] = $factorInstance->id;
             } else {
-                $factorInstance = $factorModel::on('useraccount')->create($factorData);
+                // Log or ignore if Factor doesn't exist
+                Log::warning("Factor not found: " . $factorData['uuid']);
             }
 
             $record->factor_id = $factorInstance->id;
