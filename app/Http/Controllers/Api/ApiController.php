@@ -702,7 +702,7 @@ class ApiController extends Controller
             $productModel = "App\\Models\\Sync\\Product";
 
             $productInstance = $productModel::on('useraccount')->updateOrCreate(
-                ['uuid' => $productData['uuid']],
+                ['id' => $productData['id']],
                 $productData
             );
 
@@ -740,9 +740,6 @@ class ApiController extends Controller
 
         return $record;
     }
-
-
-
 
     public function syncPerson($personData)
     {
