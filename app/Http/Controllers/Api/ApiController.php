@@ -674,27 +674,39 @@ class ApiController extends Controller
     public function syncFactorBody($record, $request)
     {
         $factorBodyData = $request['data'];
-        if (isset($request->includes['Product'])) {
-            $productData = $request->includes['Product'];
+        // if (isset($request->includes['Product'])) {
+        //     $productData = $request->includes['Product'];
+        //     $productModel = "App\\Models\\Sync\\Product";
+
+        //     $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
+
+        //     if ($productInstance) {
+        //         $productInstance->timestamps = false;
+        //         $productInstance->fill($productData);
+        //         if (isset($productData['created_at'])) {
+        //             $productInstance->created_at = $productData['created_at'];
+        //         }
+        //         if (isset($productData['updated_at'])) {
+        //             $productInstance->updated_at = $productData['updated_at'];
+        //         }
+        //         $productInstance->save();
+        //     } else {
+        //         $productInstance = $productModel::on('useraccount')->create($productData);
+        //     }
+
+        //     $record->product_id = $productInstance->id;
+        // }
+
+        if (isset($request['includes']['Product'])) {
+            $productData = $request['includes']['Product'];
             $productModel = "App\\Models\\Sync\\Product";
 
-            $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
+            $productInstance = $productModel::on('useraccount')->updateOrCreate(
+                ['uuid' => $productData['uuid']],
+                $productData
+            );
 
-            if ($productInstance) {
-                $productInstance->timestamps = false;
-                $productInstance->fill($productData);
-                if (isset($productData['created_at'])) {
-                    $productInstance->created_at = $productData['created_at'];
-                }
-                if (isset($productData['updated_at'])) {
-                    $productInstance->updated_at = $productData['updated_at'];
-                }
-                $productInstance->save();
-            } else {
-                $productInstance = $productModel::on('useraccount')->create($productData);
-            }
-
-            $record->product_id = $productInstance->id;
+            $factorBodyData['product_id'] = $productInstance->id;
         }
 
         if (isset($request->includes['Factor'])) {
