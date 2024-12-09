@@ -596,9 +596,9 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\FactorBody':
-                        
+
                         $newRecord = $this->syncFactorBody($newRecord, $request);
-                        unset( $data['product_id']);
+                        unset($data['product_id']);
                         break;
 
                     case 'App\\Models\\Sync\\Game':
@@ -672,30 +672,7 @@ class ApiController extends Controller
 
 
     public function syncFactorBody($record, $request)
-    {        
-        if (isset($request->includes['Factor'])) {
-            // $factorData = $request->includes['Factor'];
-            // $factorModel = "App\\Models\\Sync\\Factor";
-
-            // $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
-
-            // if ($factorInstance) {
-            //     $factorInstance->timestamps = false;
-            //     $factorInstance->fill($factorData);
-            //     if (isset($factorData['created_at'])) {
-            //         $factorInstance->created_at = $factorData['created_at'];
-            //     }
-            //     if (isset($factorData['updated_at'])) {
-            //         $factorInstance->updated_at = $factorData['updated_at'];
-            //     }
-            //     $factorInstance->save();
-            // } else {
-            //     $factorInstance = $factorModel::on('useraccount')->create($factorData);
-            // }
-
-            // $record->factor_id = $factorInstance->id;
-        }
-
+    {
         if (isset($request->includes['Product'])) {
             $productData = $request->includes['Product'];
             $productModel = "App\\Models\\Sync\\Product";
@@ -715,8 +692,31 @@ class ApiController extends Controller
             } else {
                 $productInstance = $productModel::on('useraccount')->create($productData);
             }
-            
+
             $record->product_id = $productInstance->id;
+        }
+
+        if (isset($request->includes['Factor'])) {
+            $factorData = $request->includes['Factor'];
+            $factorModel = "App\\Models\\Sync\\Factor";
+
+            $factorInstance = $factorModel::on('useraccount')->where('uuid', $factorData['uuid'])->first();
+
+            if ($factorInstance) {
+                $factorInstance->timestamps = false;
+                $factorInstance->fill($factorData);
+                if (isset($factorData['created_at'])) {
+                    $factorInstance->created_at = $factorData['created_at'];
+                }
+                if (isset($factorData['updated_at'])) {
+                    $factorInstance->updated_at = $factorData['updated_at'];
+                }
+                $factorInstance->save();
+            } else {
+                $factorInstance = $factorModel::on('useraccount')->create($factorData);
+            }
+
+            $record->factor_id = $factorInstance->id;
         }
 
         return $record;
