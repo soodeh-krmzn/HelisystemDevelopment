@@ -673,6 +673,7 @@ class ApiController extends Controller
 
     public function syncFactorBody($record, $request)
     {
+        $factorBodyData = $request['data'];
         if (isset($request->includes['Product'])) {
             $productData = $request->includes['Product'];
             $productModel = "App\\Models\\Sync\\Product";
