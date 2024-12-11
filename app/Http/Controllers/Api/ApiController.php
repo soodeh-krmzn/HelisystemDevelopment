@@ -572,7 +572,7 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\Game':
-                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        $existingRecord = $this->syncGame($existingRecord, $request);
                         unset($data['person_id'], $data['game_id']);
                         break;
                 }
@@ -666,10 +666,16 @@ class ApiController extends Controller
 
             $record->game_id = $gameInstance->id;
         }
+        if (isset($request->includes['FactorBody'])) {
+            foreach ($request->includes['FactorBody'] as &$body) {
+                $this->syncFactorBodies($record, $body);
+            }            
+        }
 
         return $record;
     }
 
+    public function syncGame($record, $request) {}
 
     public function syncFactorBody($record, $request)
     {
@@ -701,10 +707,21 @@ class ApiController extends Controller
             $productData = $request['includes']['Product'];
             $productModel = "App\\Models\\Sync\\Product";
 
-            $productInstance = $productModel::on('useraccount')->updateOrCreate(
-                ['id' => $productData['id']],
-                $productData
-            );
+            $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
+            if ($productInstance) {
+                $productInstance->timestamps = false;
+                $productInstance->fill($productData);
+                if (isset($productData['created_at'])) {
+                    $productInstance->created_at = $productData['created_at'];
+                }
+                if (isset($productData['updated_at'])) {
+                    $productInstance->updated_at = $productData['updated_at'];
+                }
+                $productInstance->save();
+            } else {
+                ##آیا همیشه پروداکت وجود داره و به اینجا برای ساخت محصول نمیرسه؟
+                $productInstance = $productModel::on('useraccount')->create($productData);
+            }
 
             $factorBodyData['product_id'] = $productInstance->id;
         }
