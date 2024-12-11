@@ -668,7 +668,7 @@ class ApiController extends Controller
         }
         if (isset($request->includes['FactorBody'])) {
             foreach ($request->includes['FactorBody'] as &$body) {
-                $this->syncFactorBodies($record, $body);
+                $this->syncFactorBody($record, $body);
             }            
         }
 
