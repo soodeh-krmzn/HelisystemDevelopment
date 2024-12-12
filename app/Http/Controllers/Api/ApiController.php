@@ -575,6 +575,11 @@ class ApiController extends Controller
                         $existingRecord = $this->syncGame($existingRecord, $request);
                         unset($data['person_id'], $data['game_id']);
                         break;
+
+                    case 'App\\Models\\Sync\\Payment':
+                        $existingRecord = $this->syncPayment($existingRecord, $request);
+                        unset($data['person_id']);
+                        break;
                 }
 
                 $existingRecord->timestamps = false;
@@ -596,13 +601,15 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\FactorBody':
-
                         $newRecord = $this->syncFactorBody($newRecord, $request);
                         unset($data['product_id']);
                         break;
 
                     case 'App\\Models\\Sync\\Game':
                         $newRecord = $this->syncGame($newRecord, $request);
+                        break;
+                    case 'App\\Models\\Sync\\Payment':
+                        $newRecord = $this->syncPayment($existingRecord, $request);
                         break;
                 }
 
@@ -670,6 +677,39 @@ class ApiController extends Controller
             }
 
             $record->game_id = $gameInstance->id;
+        }
+        // if (isset($request->includes['FactorBody'])) {
+        //     foreach ($request->includes['FactorBody'] as &$body) {
+        //         $this->syncFactorBody($record, $body);
+        //     }
+        // }
+
+        return $record;
+    }
+
+    public function syncPayment($record, $request)
+    {
+        if (isset($request->includes['Person'])) {
+            $personData = $request->includes['Person'];
+            $personModel = "App\\Models\\Sync\\Person";
+
+            $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
+
+            if ($personInstance) {
+                $personInstance->timestamps = false;
+                $personInstance->fill($personData);
+                if (isset($personData['created_at'])) {
+                    $personInstance->created_at = $personData['created_at'];
+                }
+                if (isset($personData['updated_at'])) {
+                    $personInstance->updated_at = $personData['updated_at'];
+                }
+                $personInstance->save();
+            } else {
+                $personInstance = $personModel::on('useraccount')->create($personData);
+            }
+
+            $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
         //     foreach ($request->includes['FactorBody'] as &$body) {
