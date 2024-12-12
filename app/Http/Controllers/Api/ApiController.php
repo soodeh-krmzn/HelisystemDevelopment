@@ -648,6 +648,11 @@ class ApiController extends Controller
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
 
+            // Set person_id in Game data if Person exists
+            if ($personInstance) {
+                $gameData['person_id'] = $personInstance->id;
+            }
+
             $gameInstance = $gameModel::on('useraccount')->where('uuid', $gameData['uuid'])->first();
 
             if ($gameInstance) {
@@ -666,11 +671,11 @@ class ApiController extends Controller
 
             $record->game_id = $gameInstance->id;
         }
-        if (isset($request->includes['FactorBody'])) {
-            foreach ($request->includes['FactorBody'] as &$body) {
-                $this->syncFactorBody($record, $body);
-            }            
-        }
+        // if (isset($request->includes['FactorBody'])) {
+        //     foreach ($request->includes['FactorBody'] as &$body) {
+        //         $this->syncFactorBody($record, $body);
+        //     }
+        // }
 
         return $record;
     }
