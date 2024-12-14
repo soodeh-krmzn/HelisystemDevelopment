@@ -558,11 +558,9 @@ class ApiController extends Controller
 
             if ($uuid) {
                 $existingRecord = $modelInstance->where('uuid', $uuid)->first();
-            }
-            
-            if (!$existingRecord && $id) {
+            } else
                 $existingRecord = $modelInstance->find($id);
-            }
+                
 
             if ($existingRecord) {
                 unset($data['id']);
