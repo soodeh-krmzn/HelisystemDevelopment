@@ -580,6 +580,11 @@ class ApiController extends Controller
                         unset($data['person_id'], $data['game_id']);
                         break;
 
+                    case 'App\\Models\\Sync\\GameMeta':
+                        $existingRecord = $this->syncGameMeta($existingRecord, $request);
+                        unset($data['g_id']);
+                        break;
+
                     case 'App\\Models\\Sync\\Payment':
                         $existingRecord = $this->syncPayment($existingRecord, $request);
                         unset($data['person_id']);
@@ -611,6 +616,11 @@ class ApiController extends Controller
                     case 'App\\Models\\Sync\\Game':
                         $newRecord = $this->syncGame($newRecord, $request);
                         break;
+
+                    case 'App\\Models\\Sync\\GameMeta':
+                        $newRecord = $this->syncGameMeta($newRecord, $request);
+                        break;
+
                     case 'App\\Models\\Sync\\Payment':
                         $newRecord = $this->syncPayment($newRecord, $request);
                         break;
@@ -712,6 +722,37 @@ class ApiController extends Controller
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
             $record->person_id = $personInstance->id;
+        }
+        // if (isset($request->includes['FactorBody'])) {
+        //     foreach ($request->includes['FactorBody'] as &$body) {
+        //         $this->syncFactorBody($record, $body);
+        //     }
+        // }
+
+        return $record;
+    }
+
+    public function syncGameMeta($record, $request)
+    {
+        if (isset($request->includes['Game'])) {
+            $gameData = $request->includes['Game'];
+            $gameModel = "App\\Models\\Sync\\Game";
+
+            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
+            if ($gameInstance) {
+                $gameInstance->timestamps = false;
+                $gameInstance->fill($gameData);
+                if (isset($gameData['created_at'])) {
+                    $gameInstance->created_at = $gameData['created_at'];
+                }
+                if (isset($gameData['updated_at'])) {
+                    $gameInstance->updated_at = $gameData['updated_at'];
+                }
+                $gameInstance->save();
+            } else {
+                $gameInstance = $gameModel::on('useraccount')->create($gameData);
+            }
+            $record->g_id = $gameInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
         //     foreach ($request->includes['FactorBody'] as &$body) {
