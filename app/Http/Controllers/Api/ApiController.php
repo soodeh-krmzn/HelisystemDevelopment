@@ -556,11 +556,13 @@ class ApiController extends Controller
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
 
-            $existingRecord = $modelInstance->where('uuid', $uuid)->first();
-            return response()->json([
-                'message' => 'record',
-                'data' => $modelInstance->where('uuid', $uuid),
-            ], 200);
+            if ($uuid) {
+                $existingRecord = $modelInstance->where('uuid', $uuid)->first();
+            }
+            
+            if (!$existingRecord && $id) {
+                $existingRecord = $modelInstance->find($id);
+            }
 
             if ($existingRecord) {
                 unset($data['id']);
