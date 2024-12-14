@@ -557,6 +557,10 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             $existingRecord = $modelInstance->where('uuid', $uuid)->first();
+            return response()->json([
+                'message' => 'record',
+                'data' => $existingRecord->toArray(),
+            ], 200);
 
             if ($existingRecord) {
                 unset($data['id']);
