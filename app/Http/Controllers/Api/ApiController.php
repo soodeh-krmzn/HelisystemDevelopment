@@ -562,11 +562,6 @@ class ApiController extends Controller
                 $existingRecord = $modelInstance->find($id);
 
 
-            return response()->json([
-                'message' => 'Record',
-                'data' => $existingRecord,
-            ], 200);
-
             if ($existingRecord) {
                 unset($data['id']);
                 switch ($modelClass) {
