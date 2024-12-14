@@ -598,6 +598,10 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
+                return response()->json([
+                    'message' => 'response ',
+                    'data' => $newRecord,
+                ], 200);
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
@@ -614,12 +618,7 @@ class ApiController extends Controller
                     case 'App\\Models\\Sync\\Payment':
                         $newRecord = $this->syncPayment($existingRecord, $request);
                         break;
-                }
-                return response()->json([
-                    'message' => 'response ',
-                    'data' => $newRecord,
-                ], 200);
-
+                }                
 
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
