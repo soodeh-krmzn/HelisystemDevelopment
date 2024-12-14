@@ -598,10 +598,6 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                return response()->json([
-                    'message' => 'response ',
-                    'data' => $newRecord,
-                ], 200);
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
@@ -616,9 +612,10 @@ class ApiController extends Controller
                         $newRecord = $this->syncGame($newRecord, $request);
                         break;
                     case 'App\\Models\\Sync\\Payment':
-                        $newRecord = $this->syncPayment($existingRecord, $request);
+                        $newRecord = $this->syncPayment($newRecord, $request);
                         break;
-                }                
+                }
+
 
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
@@ -714,8 +711,7 @@ class ApiController extends Controller
                 $personInstance->save();
             } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
-            }
-            return $record;
+            }            
             $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
