@@ -560,7 +560,12 @@ class ApiController extends Controller
                 $existingRecord = $modelInstance->where('uuid', $uuid)->first();
             } else
                 $existingRecord = $modelInstance->find($id);
-                
+
+
+            return response()->json([
+                'message' => 'Record',
+                'data' => $existingRecord->toArray(),
+            ], 200);
 
             if ($existingRecord) {
                 unset($data['id']);
