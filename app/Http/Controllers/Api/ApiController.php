@@ -716,7 +716,7 @@ class ApiController extends Controller
             } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
-            return $record->person_id;
+            return $record;
             $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
