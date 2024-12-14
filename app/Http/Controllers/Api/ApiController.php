@@ -598,6 +598,10 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
+                return response()->json([
+                    'message' => 'Record',
+                    'data' => $newRecord,
+                ], 200);
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
