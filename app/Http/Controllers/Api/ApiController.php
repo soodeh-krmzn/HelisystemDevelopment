@@ -712,11 +712,6 @@ class ApiController extends Controller
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
 
-            return response()->json([
-                'message' => 'Record',
-                'data' => $personInstance,
-            ], 200);
-
             $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
