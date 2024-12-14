@@ -555,17 +555,17 @@ class ApiController extends Controller
             $uuid = $validated['m_uuid'] ?? null;
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
-
+            return response()->json([
+                'message' => 'Record',
+                'data' => $uuid,
+            ], 200);
             if ($uuid) {
                 $existingRecord = $modelInstance->where('uuid', $uuid)->first();
             } else
                 $existingRecord = $modelInstance->find($id);
 
 
-            return response()->json([
-                'message' => 'Record',
-                'data' => $existingRecord->toArray(),
-            ], 200);
+            
 
             if ($existingRecord) {
                 unset($data['id']);
