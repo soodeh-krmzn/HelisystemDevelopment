@@ -711,7 +711,7 @@ class ApiController extends Controller
                 $personInstance->save();
             } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
-            }            
+            }
             $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
@@ -723,7 +723,37 @@ class ApiController extends Controller
         return $record;
     }
 
-    public function syncGame($record, $request) {}
+    public function syncGame($record, $request)
+    {
+        if (isset($request->includes['Person'])) {
+            $personData = $request->includes['Person'];
+            $personModel = "App\\Models\\Sync\\Person";
+
+            $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
+
+            if ($personInstance) {
+                $personInstance->timestamps = false;
+                $personInstance->fill($personData);
+                if (isset($personData['created_at'])) {
+                    $personInstance->created_at = $personData['created_at'];
+                }
+                if (isset($personData['updated_at'])) {
+                    $personInstance->updated_at = $personData['updated_at'];
+                }
+                $personInstance->save();
+            } else {
+                $personInstance = $personModel::on('useraccount')->create($personData);
+            }
+            $record->person_id = $personInstance->id;
+        }
+        // if (isset($request->includes['FactorBody'])) {
+        //     foreach ($request->includes['FactorBody'] as &$body) {
+        //         $this->syncFactorBody($record, $body);
+        //     }
+        // }
+
+        return $record;
+    }
 
     public function syncFactorBody($record, $request)
     {
