@@ -615,6 +615,11 @@ class ApiController extends Controller
                         $newRecord = $this->syncPayment($existingRecord, $request);
                         break;
                 }
+                return response()->json([
+                    'message' => 'response ',
+                    'data' => $newRecord->toArray(),
+                ], 200);
+
 
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
@@ -711,7 +716,7 @@ class ApiController extends Controller
             } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
-
+            return $record->person_id;
             $record->person_id = $personInstance->id;
         }
         // if (isset($request->includes['FactorBody'])) {
