@@ -616,6 +616,10 @@ class ApiController extends Controller
                         break;
                 }
 
+                return response()->json([
+                    'message' => 'response',
+                    'data' => $newRecord,
+                ], 200);
 
                 $newRecord->timestamps = false;
                 if ($createdAt) $newRecord->created_at = $createdAt;
@@ -732,6 +736,7 @@ class ApiController extends Controller
             $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first();
 
             if ($personInstance) {
+                return $personInstance;
                 $personInstance->timestamps = false;
                 $personInstance->fill($personData);
                 if (isset($personData['created_at'])) {
