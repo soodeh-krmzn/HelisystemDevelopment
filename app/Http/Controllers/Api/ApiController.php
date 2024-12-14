@@ -598,10 +598,6 @@ class ApiController extends Controller
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                return response()->json([
-                    'message' => 'Record',
-                    'data' => $newRecord,
-                ], 200);
                 switch ($modelClass) {
                     case 'App\\Models\\Sync\\Factor':
                         $newRecord = $this->syncFactor($newRecord, $request);
@@ -715,6 +711,11 @@ class ApiController extends Controller
             } else {
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
+
+            return response()->json([
+                'message' => 'Record',
+                'data' => $personInstance,
+            ], 200);
 
             $record->person_id = $personInstance->id;
         }
