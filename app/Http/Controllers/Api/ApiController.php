@@ -733,9 +733,9 @@ class ApiController extends Controller
             $personData = $request->includes['Person'];
             $personModel = "App\\Models\\Sync\\Person";
 
-            $personInstance = $personModel::on('useraccount')->get();
+            $personInstance = $personModel::on('useraccount')->where('uuid', $personData['uuid'])->first()->withTrashed();
             return $personInstance;
-            if ($personInstance) {        
+            if ($personInstance) {
                 $personInstance->timestamps = false;
                 $personInstance->fill($personData);
                 if (isset($personData['created_at'])) {
