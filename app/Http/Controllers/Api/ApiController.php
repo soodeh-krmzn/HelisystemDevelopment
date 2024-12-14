@@ -617,7 +617,7 @@ class ApiController extends Controller
                 }
                 return response()->json([
                     'message' => 'response ',
-                    'data' => $newRecord->toArray(),
+                    'data' => $newRecord,
                 ], 200);
 
 
