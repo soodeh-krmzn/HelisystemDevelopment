@@ -631,7 +631,7 @@ class ApiController extends Controller
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
                 $newRecord->save();
 
-                return response()->json(['message' => 'Record synced successfully', 'data' => $newRecord->toArray()], 200);
+                return response()->json(['message' => 'Record synced successfully model name->'.$modelClass, 'data' => $newRecord->toArray()], 200);
             }
         } catch (\Exception $e) {
             Log::error("Sync failed: " . $e->getMessage());
