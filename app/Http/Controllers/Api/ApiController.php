@@ -733,7 +733,7 @@ class ApiController extends Controller
             $personData = $request->includes['Person'];
             $personModel = "App\\Models\\Sync\\Person";
 
-            $personInstance = $personModel::on('useraccount')->all();
+            $personInstance = $personModel::on('useraccount')->get();
             return $personInstance;
             if ($personInstance) {        
                 $personInstance->timestamps = false;
