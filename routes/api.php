@@ -36,6 +36,8 @@ Route::post('/check-license-key', [ApiController::class, 'verifyLicense']);
 Route::post('/data-sync', [ApiController::class, 'syncDataTable']);
 Route::post('/data-record-collect', [ApiController::class, 'dataRecordCollect']);
 Route::post('/sync/store', [ApiController::class, 'storeSyncData']);
+Route::post('/update-sync-status', [ApiController::class, 'updateStatus']);
+
 
 // //User
 // Route::get('check-login', [UserController::class, 'checkLogin']);

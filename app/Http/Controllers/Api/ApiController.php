@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Models\MyModels\Sync;
 use App\Models\User;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Services\Database;
+use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
@@ -488,6 +490,40 @@ class ApiController extends Controller
         }
     }
 
+    public function updateStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:syncs,id',
+            'status' => 'required|integer|in:0,1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Invalid input.',
+                'details' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $record = Sync::findOrFail($request->id);
+            $record->status = $request->status;
+            $record->save();
+
+            return response()->json([
+                'message' => 'Sync status updated successfully.',
+                'data' => [
+                    'id' => $record->id,
+                    'status' => $record->status
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to update status.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     // public function fetchUnsyncedRecords()
     // {
     //     return Sync::where('status', 0)->with(['model'])->get();
@@ -631,7 +667,7 @@ class ApiController extends Controller
                 if ($updatedAt) $newRecord->updated_at = $updatedAt;
                 $newRecord->save();
 
-                return response()->json(['message' => 'Record synced successfully model name->'.$modelClass, 'data' => $newRecord->toArray()], 200);
+                return response()->json(['message' => 'Record synced successfully model name->' . $modelClass, 'data' => $newRecord->toArray()], 200);
             }
         } catch (\Exception $e) {
             Log::error("Sync failed: " . $e->getMessage());
