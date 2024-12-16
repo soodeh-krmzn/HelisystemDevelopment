@@ -492,18 +492,6 @@ class ApiController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|integer|exists:syncs,id',
-            'status' => 'required|integer|in:0,1'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => 'Invalid input.',
-                'details' => $validator->errors()
-            ], 422);
-        }
-
         $status = $request['status'];
         $id = (int)$request['id'];
         $accountId = $request['accountId'];
