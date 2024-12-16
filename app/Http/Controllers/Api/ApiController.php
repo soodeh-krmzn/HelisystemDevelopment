@@ -646,8 +646,11 @@ class ApiController extends Controller
                         unset($data['person_id']);
                         break;
 
+                    // case 'App\\Models\\Sync\\Person':
+                    //     $existingRecord = $this->syncPerson($existingRecord, $request);
+                    //     break;
                     case 'App\\Models\\Sync\\PersonMeta':
-                        $existingRecord = $this->syncPersonMeta($existingRecord, $request);
+                        $existingRecord = $this->syncPersonMeta( $existingRecord, $request);
                         unset($data['person_id']);
                         break;
                 }
@@ -939,7 +942,7 @@ class ApiController extends Controller
         return $record;
     }
 
-    public function syncPerson($personData)
+    public function syncPerson($record, $request)
     {
         $personModel = "App\\Models\\Sync\\Person";
 
@@ -947,10 +950,10 @@ class ApiController extends Controller
             throw new \Exception("Person model not found");
         }
 
-        $personInstance = $personModel::where('uuid', $personData['uuid'])->first();
+        $personInstance = $personModel::where('uuid', $record['uuid'])->first();
 
         if (!$personInstance) {
-            $personInstance = $personModel::create($personData);
+            $personInstance = $personModel::create($record);
         }
 
         return $personInstance;
