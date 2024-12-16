@@ -598,7 +598,7 @@ class ApiController extends Controller
             $modelFullClassName = $validated['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
-
+            return response()->json(['error' => $modelClass], 400);
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => 'Invalid model name'], 400);
             }
@@ -997,7 +997,7 @@ class ApiController extends Controller
 
             $record->person_id = $personInstance->id;
         }
-        
+
         return $record;
     }
 
