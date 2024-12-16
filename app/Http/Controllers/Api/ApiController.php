@@ -995,7 +995,7 @@ class ApiController extends Controller
                 $personInstance = $personModel::on('useraccount')->create($personData);
             }
 
-            $record->person_id = $personInstance->id;
+            $record->p_id = $personInstance->id;
         }
 
         return $record;
