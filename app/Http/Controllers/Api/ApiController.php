@@ -533,8 +533,8 @@ class ApiController extends Controller
 
         try {
             // $record = Sync::findOrFail($request->id);
-            $record = DB::connection('useraccount')->table('syncs')->where('id', $request->id)->first();
-            DB::connection('useraccount')->table('syncs')->where('id', $id)->update([
+            $record = DB::connection('useraccount')->table('sync')->where('id', $request->id)->first();
+            DB::connection('useraccount')->table('sync')->where('id', $id)->update([
                 'status' => $status,
                 'updated_at' => now()
             ]);
