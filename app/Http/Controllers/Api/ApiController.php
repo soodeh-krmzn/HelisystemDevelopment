@@ -504,6 +504,33 @@ class ApiController extends Controller
             ], 422);
         }
 
+        $status = $request['status'];
+        $id = (int)$request['id'];
+        $accountId = $request['accountId'];
+        $account = Account::findOrFail($accountId);
+
+        if (!$account) {
+            return response()->json(['error' => 'Account not found'], 404);
+        }
+
+        DB::purge('useraccount');
+        Config::set('database.connections.useraccount', [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => '3db',
+            'username' => '3user',
+            'password' => 'jVHRfOQnDQ3v',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ]);
+
         try {
             $record = Sync::findOrFail($request->id);
             $record->status = $request->status;
