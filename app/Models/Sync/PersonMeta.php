@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Sync;
 
 use App\Models\MyModels\Sync;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
