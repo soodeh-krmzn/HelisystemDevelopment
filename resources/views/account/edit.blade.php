@@ -101,6 +101,10 @@
                                         <label>نامک</label>
                                         <input type="text" name="slug" class="form-control" value="{{ old("slug") ?? $account->slug }}" placeholder="نامک...">
                                     </div>
+                                    <div class="col-md-3 form-group">
+                                        <label>توکن عبور آفلاین</label>
+                                        <input type="text" name="pc_token" class="form-control" value="{{ old("pc_token") ?? $account->pc_token }}" placeholder="توکن عبور آفلاین...">
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 form-group">

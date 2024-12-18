@@ -83,6 +83,7 @@ class AccountController extends Controller
             'town' => 'required',
             'days' => 'required|integer',
             'sms_charge' => 'nullable|integer',
+            'pc_token' => 'nullable'
         ]);
         // dd($request->group_id);
         $account->update([
@@ -102,6 +103,7 @@ class AccountController extends Controller
             'zarinpal' => $request->zarinpal,
             'sms_package_id' => $request->sms_package,
             'package_id' => $request->account_package,
+            'pc_token' => $request->pc_token,
         ]);
 
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
@@ -155,7 +157,7 @@ class AccountController extends Controller
         $account->db_user = Crypt::encryptString($request->db_user);
         $account->db_pass = Crypt::encryptString($request->db_pass);
         $account->save();
-        
+
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
         return redirect()->route('account.index');
     }
