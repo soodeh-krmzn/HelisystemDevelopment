@@ -333,7 +333,6 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        return response()->json(['error' => 'Account'.$account->db_name]);
         $this->account($account);
 
         try {
@@ -341,7 +340,7 @@ class ApiController extends Controller
             $data = DB::connection('useraccount')->select($query);
             return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Database connection failed sdfsdf: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
         }
     }
 
