@@ -31,10 +31,6 @@ class ApiController extends Controller
         }
         return response()->json(['data' => $resp], 200, [], JSON_UNESCAPED_UNICODE);
     }
-    public function test()
-    {
-        return "test";
-    }
 
     public function checkCode(Request $request)
     {
@@ -191,13 +187,8 @@ class ApiController extends Controller
         return compact('name', 'user', 'pass');
     }
 
-    public function connectdb(Request $request)
+    private function account($account)
     {
-        $userId = $request['userId'];
-        $account = Account::where('id', $userId)->first();
-        if (!$account) {
-            return response()->json(['error' => 'Account not found'], 404);
-        }
         $db_name = $account->db_name;
         $db_user = $account->db_user;
         $db_pass = $account->db_pass;
@@ -220,7 +211,15 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
-
+    }
+    public function connectdb(Request $request)
+    {
+        $userId = $request['userId'];
+        $account = Account::where('id', $userId)->first();
+        if (!$account) {
+            return response()->json(['error' => 'Account not found'], 404);
+        }
+        $this->account($account);
         try {
             $tables = DB::connection('useraccount')->select('SHOW TABLES');
             return response()->json($tables);
@@ -240,46 +239,8 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        // $db_name = $account->db_name;
-        // $db_user = $account->db_user;
-        // $db_pass = $account->db_pass;
 
-        // $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
-        DB::purge('useraccount');
-        // Config::set('database.connections.useraccount', [
-        //     'driver' => 'mysql',
-        //     'host' => 'localhost',
-        //     'database' => $decrypted['name'],
-        //     'username' => $decrypted['user'],
-        //     'password' => $decrypted['pass'],
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        //     'prefix_indexes' => true,
-        //     'strict' => false,
-        //     'engine' => null,
-        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        //     ]) : [],
-        // ]);
-
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
-
+        $this->account($account);
 
         try {
             $query = "SELECT * FROM {$tableName} LIMIT ? OFFSET ?";
@@ -372,47 +333,8 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        // $db_name = $account->db_name;
-        // $db_user = $account->db_user;
-        // $db_pass = $account->db_pass;
 
-        // $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
-
-        // DB::purge('useraccount');
-        // Config::set('database.connections.useraccount', [
-        //     'driver' => 'mysql',
-        //     'host' => 'localhost',
-        //     'database' => $decrypted['name'],
-        //     'username' => $decrypted['user'],
-        //     'password' => $decrypted['pass'],
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        //     'prefix_indexes' => true,
-        //     'strict' => false,
-        //     'engine' => null,
-        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        //     ]) : [],
-        // ]);
-
-        DB::purge('useraccount');
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
+        $this->account($account);
 
         try {
             $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
@@ -433,46 +355,8 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        // $db_name = $account->db_name;
-        // $db_user = $account->db_user;
-        // $db_pass = $account->db_pass;
 
-        // $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
-        // DB::purge('useraccount');
-        // Config::set('database.connections.useraccount', [
-        //     'driver' => 'mysql',
-        //     'host' => 'localhost',
-        //     'database' => $decrypted['name'],
-        //     'username' => $decrypted['user'],
-        //     'password' => $decrypted['pass'],
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        //     'prefix_indexes' => true,
-        //     'strict' => false,
-        //     'engine' => null,
-        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        //     ]) : [],
-        // ]);
-
-        DB::purge('useraccount');
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
+        $this->account($account);
 
         try {
             // if ($tableName === 'games') {
@@ -501,23 +385,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        DB::purge('useraccount');
-        Config::set('database.connections.useraccount', [
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
+        $this->account($account);
 
         try {
             // $record = Sync::findOrFail($request->id);
@@ -580,22 +448,19 @@ class ApiController extends Controller
 
     public function storeSyncData(Request $request)
     {
-        $validated = $request->validate([
-            'model_name' => 'required|string',
-            'm_id' => 'nullable|integer',
-            'm_uuid' => 'nullable|string',
-            'data' => 'required|array',
-        ]);
 
-        $accountId = 3;
-        $account = Account::find($accountId);
+
+        $accountId = $request['accountId'];
+        $account = Account::findOrFail($accountId);
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
+        $this->account($account);
+
         try {
-            $modelFullClassName = $validated['model_name'];
+            $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
 
@@ -606,9 +471,9 @@ class ApiController extends Controller
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
 
-            $data = $validated['data'];
-            $id = $validated['m_id'] ?? null;
-            $uuid = $validated['m_uuid'] ?? null;
+            $data = $request['data'];
+            $id = $request['m_id'] ?? null;
+            $uuid = $request['m_uuid'] ?? null;
             $createdAt = $data['created_at'] ?? null;
             $updatedAt = $data['updated_at'] ?? null;
 
@@ -646,11 +511,11 @@ class ApiController extends Controller
                         unset($data['person_id']);
                         break;
 
-                    // case 'App\\Models\\Sync\\Person':
-                    //     $existingRecord = $this->syncPerson($existingRecord, $request);
-                    //     break;
+                        // case 'App\\Models\\Sync\\Person':
+                        //     $existingRecord = $this->syncPerson($existingRecord, $request);
+                        //     break;
                     case 'App\\Models\\Sync\\PersonMeta':
-                        $existingRecord = $this->syncPersonMeta( $existingRecord, $request);
+                        $existingRecord = $this->syncPersonMeta($existingRecord, $request);
                         unset($data['person_id']);
                         break;
                 }
