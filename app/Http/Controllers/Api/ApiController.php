@@ -241,8 +241,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $res= $this->account($account);
-        return response()->json(data: ['info' => $res]);
+        $this->account($account);
 
         try {
             $query = "SELECT * FROM {$tableName} LIMIT ? OFFSET ?";
@@ -335,7 +334,8 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        $this->account($account);
+        $res= $this->account($account);
+        return response()->json(data: ['info' => $res]);
 
         try {
             $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
