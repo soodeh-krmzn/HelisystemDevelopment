@@ -194,6 +194,7 @@ class ApiController extends Controller
         $db_pass = $account->db_pass;
 
         $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
+        return $decrypted;
         DB::purge('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
@@ -240,7 +241,8 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $this->account($account);
+        $res= $this->account($account);
+        return response()->json(data: ['info' => $res]);
 
         try {
             $query = "SELECT * FROM {$tableName} LIMIT ? OFFSET ?";
