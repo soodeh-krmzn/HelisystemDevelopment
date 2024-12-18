@@ -194,7 +194,6 @@ class ApiController extends Controller
         $db_pass = $account->db_pass;
 
         $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
-        return $decrypted;
         DB::purge('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',

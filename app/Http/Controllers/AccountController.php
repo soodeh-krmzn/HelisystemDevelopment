@@ -155,7 +155,7 @@ class AccountController extends Controller
         $account->db_user = Crypt::encryptString($request->db_user);
         $account->db_pass = Crypt::encryptString($request->db_pass);
         $account->save();
-
+        
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
         return redirect()->route('account.index');
     }
