@@ -75,7 +75,7 @@ class Account extends Model
     }
     public function sms_package(): BelongsTo
     {
-        return $this->belongsTo(Package::class,'sms_package_id');
+        return $this->belongsTo(Package::class, 'sms_package_id');
     }
 
     public function getFullName(): string
@@ -102,5 +102,10 @@ class Account extends Model
                 return '';
                 break;
         }
+    }
+
+    public function tokens()
+    {
+        return $this->hasMany(Token::class);
     }
 }

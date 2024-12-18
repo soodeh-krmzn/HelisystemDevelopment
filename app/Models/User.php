@@ -20,8 +20,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'account_id', 'name', 'family', 'mobile', 'username', 'password', 'otp_code', 'access', 'group_id'
-        ,'status','description'
+        'account_id',
+        'name',
+        'family',
+        'mobile',
+        'username',
+        'password',
+        'otp_code',
+        'access',
+        'group_id',
+        'status',
+        'description'
     ];
 
     /**
@@ -52,5 +61,10 @@ class User extends Authenticatable
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function tokens()
+    {
+        return $this->hasMany(Token::class);
     }
 }
