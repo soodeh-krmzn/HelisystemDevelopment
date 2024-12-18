@@ -151,15 +151,9 @@ class AccountController extends Controller
         } catch (\Throwable $th) {
             dd($th, $newPassword);
         }
-        $key = base64_decode(Config::get('app.custom_key'));
-        $encrypter = new Encrypter($key, Config::get('app.cipher'));
-        $account->db_name = $encrypter->encryptString($request->db_name);
-        $account->db_user = $encrypter->encryptString($request->db_name);
-        $account->db_pass = $encrypter->encryptString($request->db_name);
-
-        // $account->db_name = Crypt::encryptString($request->db_name);
-        // $account->db_user = Crypt::encryptString($request->db_user);
-        // $account->db_pass = Crypt::encryptString($request->db_pass);
+        $account->db_name = Crypt::encryptString($request->db_name);
+        $account->db_user = Crypt::encryptString($request->db_user);
+        $account->db_pass = Crypt::encryptString($request->db_pass);
         $account->save();
 
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
