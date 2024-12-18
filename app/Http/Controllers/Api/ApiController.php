@@ -333,7 +333,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-
+        return response()->json(['error' => 'Account'.$account->db_name]);
         $this->account($account);
 
         try {
