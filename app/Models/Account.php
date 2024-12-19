@@ -104,8 +104,8 @@ class Account extends Model
         }
     }
 
-    public function tokens()
+    public function licenses()
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(License::class);
     }
 }

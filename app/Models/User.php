@@ -63,8 +63,8 @@ class User extends Authenticatable
         return $this->belongsTo(Account::class);
     }
 
-    public function tokens()
+    public function licenses()
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(License::class);
     }
 }

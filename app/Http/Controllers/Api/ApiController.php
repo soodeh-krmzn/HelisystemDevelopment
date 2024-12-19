@@ -70,14 +70,17 @@ class ApiController extends Controller
             $validatedData = $request->validate([
                 'pc_token' => 'required|string|max:255',
                 'system_code' => 'required|string|max:255',
+                'username' => 'required|string|max:255',
             ]);
 
             $pcToken = $validatedData['pc_token'];
             $systemCode = $validatedData['system_code'];
+            $username = $validatedData['username'];
 
             $licenseData = [
                 'pc_token' => $pcToken,
                 'system_code' => $systemCode,
+                'username' => $username,
                 'issued_at' => now(),
                 'license_id' => Str::uuid(),
             ];
@@ -85,17 +88,33 @@ class ApiController extends Controller
             $encryptedLicense = Crypt::encryptString(json_encode($licenseData));
 
             $account = Account::where('pc_token', $pcToken)->first();
-            if ($account) {
-                $account->license_key = $encryptedLicense;
-                $account->save();
-                return response()->json([
-                    'licenseKey' => $encryptedLicense,
-                ], 200);
+            $user = User::where('username', $username)->first();
+
+            if ($account && $user) {
+                if ($user->account_id === $account->id) {
+                    $account->license_key = $encryptedLicense;
+                    $account->save();
+                    return response()->json([
+                        'licenseKey' => $encryptedLicense,
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'error' => 'شماره تماس با توکن مطابقت ندارد.',
+                    ], 404);
+                }
             } else {
-                return response()->json([
-                    'error' => 'کاربری با این مشخصات یافت نشد.',
-                ], 404);
+                if (!$account) {
+                    return response()->json([
+                        'error' => 'نوکن صحیح نیست.',
+                    ], 404);
+                }
+                if (!$user) {
+                    return response()->json([
+                        'error' => 'شماره تماس صحیح نیست.',
+                    ], 404);
+                }
             }
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
@@ -333,7 +352,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        $res= $this->account($account);
+        $res = $this->account($account);
         return response()->json(data: ['info' => $res]);
 
         try {
