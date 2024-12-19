@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Token extends Model
+class License extends Model
 {
     use HasFactory;
-    protected $table = 'tokens';
+    protected $table = 'licenses';
     protected $fillable = ['user_id', 'account_id', 'token'];
 
     public function user()
