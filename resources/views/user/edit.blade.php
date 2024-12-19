@@ -63,9 +63,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4 form-group">
+                                        <label>توکن عبور آفلاین</label>
+                                        <input type="text" name="description" class="form-control" value="{{ old("description") ?? $user->description }}" placeholder="نام کاربری...">
+                                    </div>
+                                    <div class="col-md-4 form-group">
                                         <label>علت</label>
                                         <input type="text" name="description" class="form-control" value="{{ old("description") ?? $user->description }}" placeholder="نام کاربری...">
-
                                     </div>
                                 </div>
                             </div>
