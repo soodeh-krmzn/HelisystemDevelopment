@@ -172,7 +172,7 @@ class ApiController extends Controller
                     } else {
                         $userActive = User::where('id', $license->userActive)->first();
                         return response()->json([
-                            'error' => 'لایسنس توسط کاربر.' . $userActive->username . 'در حال استفاده است',
+                            'error' => 'لایسنس توسط کاربر' . $userActive->username . 'در حال استفاده است.',
                         ], 404);
                     }
                 } else {
