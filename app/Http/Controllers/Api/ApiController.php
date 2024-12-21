@@ -145,15 +145,41 @@ class ApiController extends Controller
 
         $inputLicenseKey = $validatedData['licenseKey'];
         $inputSystemCode = $validatedData['system_code'];
+        $inputUsername = $validatedData['username'];
 
         try {
-            $account = License::where('license', $inputLicenseKey)->first()->account;
+            $license = License::where('license', $inputLicenseKey)->first();
+            $user = User::where('username', $inputUsername)->first();
+            $account = $license->account;
 
-            if (!$account) {
+            if (!$license) {
                 return response()->json([
-                    'error' => 'کاربری با این مشخصات یافت نشد.',
+                    'error' => 'لایسنسی یافت نشد.',
                 ], 404);
             }
+
+            if ($account && $user) {
+                if ($user->account_id === $account->id) {                    
+                    $license->isActive = true;
+                    $license->userActive = $user->id;
+                } else {
+                    return response()->json([
+                        'error' => 'شماره تماس با حساب مطابقت ندارد.',
+                    ], 404);
+                }
+            } else {
+                if (!$account) {
+                    return response()->json([
+                        'error' => 'لایسنس صحیح نیست.',
+                    ], 404);
+                }
+                if (!$user) {
+                    return response()->json([
+                        'error' => 'شماره تماس صحیح نیست.',
+                    ], 404);
+                }
+            }
+
 
             $licenseData = json_decode(Crypt::decryptString($inputLicenseKey), true);
 
@@ -173,6 +199,7 @@ class ApiController extends Controller
             }
 
             $user = User::where('username', $validatedData['username'])->first();
+
             return response()->json([
                 'user' => $user,
             ], 200);
