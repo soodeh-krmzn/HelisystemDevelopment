@@ -137,7 +137,6 @@ class ApiController extends Controller
 
     public function verifyLicense(Request $request)
     {
-        // Validate the request data
         $validatedData = $request->validate([
             'licenseKey' => 'required|string',
             'system_code' => 'required|string|max:255',
@@ -149,7 +148,6 @@ class ApiController extends Controller
         $inputUsername = $validatedData['username'];
 
         try {
-            // Retrieve the license
             $license = License::where('license', $inputLicenseKey)->first();
             if (!$license) {
                 return response()->json([
@@ -157,19 +155,18 @@ class ApiController extends Controller
                 ], 404);
             }
 
-            // Retrieve the account and user
             $account = $license->account;
             $user = User::where('username', $inputUsername)->first();
 
             if ($account && $user) {
-                // Check if the user is associated with the account
                 if ($user->account_id === $account->id) {
-                    // Activate the license if not already active
-                    if (!$license->isActive && $license->userActive == $user->id) {
+                    if (!$license->isActive) {
+                        // Activate the license with the current user
                         $license->isActive = true;
                         $license->userActive = $user->id;
                         $license->save();
-                    } else {
+                    } elseif ($license->userActive != $user->id) {
+                        // License is active and used by another user
                         $userActive = User::where('id', $license->userActive)->first();
                         return response()->json([
                             'error' => 'لایسنس توسط کاربر ' . $userActive->username . ' در حال استفاده است.',
@@ -193,7 +190,6 @@ class ApiController extends Controller
                 }
             }
 
-            // Decrypt and validate the license data
             $licenseData = json_decode(Crypt::decryptString($inputLicenseKey), true);
             if ($licenseData['system_code'] !== $inputSystemCode) {
                 return response()->json([
@@ -201,7 +197,6 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            // Check account status
             if ($account->status != 'active') {
                 $desc = $account->description;
                 return response()->json([
@@ -211,7 +206,6 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            // Return success response
             return response()->json([
                 'user' => $user,
                 'license' => $license,
