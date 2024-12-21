@@ -205,7 +205,7 @@ class ApiController extends Controller
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Invalid or corrupted license key.',
+               'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
             ], 400);
         }
     }
