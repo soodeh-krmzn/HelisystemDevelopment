@@ -137,6 +137,7 @@ class ApiController extends Controller
 
     public function verifyLicense(Request $request)
     {
+        // Validate the request data
         $validatedData = $request->validate([
             'licenseKey' => 'required|string',
             'system_code' => 'required|string|max:255',
@@ -148,22 +149,30 @@ class ApiController extends Controller
         $inputUsername = $validatedData['username'];
 
         try {
+            // Retrieve the license
             $license = License::where('license', $inputLicenseKey)->first();
             if (!$license) {
                 return response()->json([
-                    'error' => 'لایسنسی معتبر نیست.',
+                    'error' => 'لایسنس معتبر نیست.',
                 ], 404);
             }
-            $user = User::where('username', $inputUsername)->first();
+
+            // Retrieve the account and user
             $account = $license->account;
+            $user = User::where('username', $inputUsername)->first();
 
             if ($account && $user) {
+                // Check if the user is associated with the account
                 if ($user->account_id === $account->id) {
-                    $license->isActive = true;
-                    $license->userActive = $user->id;
+                    // Activate the license if not already active
+                    if (!$license->isActive) {
+                        $license->isActive = true;
+                        $license->userActive = $user->id;
+                        $license->save();
+                    }
                 } else {
                     return response()->json([
-                        'error' => 'شماره تماس با حساب مطابقت ندارد.',
+                        'error' => 'شماره تماس با حساب لایسنس مطابقت ندارد.',
                     ], 404);
                 }
             } else {
@@ -179,15 +188,15 @@ class ApiController extends Controller
                 }
             }
 
-
+            // Decrypt and validate the license data
             $licenseData = json_decode(Crypt::decryptString($inputLicenseKey), true);
-
             if ($licenseData['system_code'] !== $inputSystemCode) {
                 return response()->json([
                     'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
                 ], 403);
             }
 
+            // Check account status
             if ($account->status != 'active') {
                 $desc = $account->description;
                 return response()->json([
@@ -197,10 +206,10 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            $user = User::where('username', $validatedData['username'])->first();
-
+            // Return success response
             return response()->json([
                 'user' => $user,
+                'license' => $license,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
