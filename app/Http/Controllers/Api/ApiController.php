@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Models\License;
 use App\Models\MyModels\Sync;
 use App\Models\User;
 use Illuminate\Encryption\Encrypter;
@@ -91,12 +92,25 @@ class ApiController extends Controller
 
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
-                    $account->license_key = $encryptedLicense;
-                    $account->save();
-                    return response()->json([
-                        'licenseKey' => $encryptedLicense,
-                        'user' => $user,
-                    ], 200);
+                    $license = License::where('account_id', $account->id)->first();
+
+                    if ($license) {
+                        return response()->json([
+                            'licenseKey' => $license->license,
+                            'user' => $user,
+                        ], 200);
+                    } else {
+                        $license = new License();
+                        $license->account_id = $account->id;
+                        $license->license = $encryptedLicense;
+                        $license->status = 1; 
+                        $license->save();
+
+                        return response()->json([
+                            'licenseKey' => $encryptedLicense,
+                            'user' => $user,
+                        ], 200);
+                    }
                 } else {
                     return response()->json([
                         'error' => 'شماره تماس با حساب مطابقت ندارد.',
@@ -105,7 +119,7 @@ class ApiController extends Controller
             } else {
                 if (!$account) {
                     return response()->json([
-                        'error' => 'نوکن صحیح نیست.',
+                        'error' => 'توکن صحیح نیست.',
                     ], 404);
                 }
                 if (!$user) {
