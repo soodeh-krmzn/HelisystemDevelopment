@@ -103,7 +103,7 @@ class ApiController extends Controller
                         $license = new License();
                         $license->account_id = $account->id;
                         $license->license = $encryptedLicense;
-                        $license->status = 1; 
+                        $license->status = 1;
                         $license->save();
 
                         return response()->json([
@@ -140,13 +140,14 @@ class ApiController extends Controller
         $validatedData = $request->validate([
             'licenseKey' => 'required|string',
             'system_code' => 'required|string|max:255',
+            'username' => 'required|string',
         ]);
 
         $inputLicenseKey = $validatedData['licenseKey'];
         $inputSystemCode = $validatedData['system_code'];
 
         try {
-            $account = Account::where('license_key', $inputLicenseKey)->first();
+            $account = License::where('license', $inputLicenseKey)->first()->account;
 
             if (!$account) {
                 return response()->json([
@@ -171,7 +172,7 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            $user = User::where('account_id', $account->id)->first();
+            $user = User::where('username', $validatedData['username'])->first();
             return response()->json([
                 'user' => $user,
             ], 200);
