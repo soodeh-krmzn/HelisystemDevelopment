@@ -10,12 +10,7 @@ class License extends Model
 {
     use HasFactory;
     protected $table = 'licenses';
-    protected $fillable = ['user_id', 'account_id', 'token'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = ['account_id', 'license' , 'status'];
 
     public function account()
     {

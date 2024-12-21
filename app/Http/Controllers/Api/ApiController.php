@@ -75,12 +75,10 @@ class ApiController extends Controller
 
             $pcToken = $validatedData['pc_token'];
             $systemCode = $validatedData['system_code'];
-            $username = $validatedData['username'];
 
             $licenseData = [
                 'pc_token' => $pcToken,
                 'system_code' => $systemCode,
-                'username' => $username,
                 'issued_at' => now(),
                 'license_id' => Str::uuid(),
             ];
@@ -88,33 +86,18 @@ class ApiController extends Controller
             $encryptedLicense = Crypt::encryptString(json_encode($licenseData));
 
             $account = Account::where('pc_token', $pcToken)->first();
-            $user = User::where('username', $username)->first();
 
-            if ($account && $user) {
-                if ($user->account_id === $account->id) {
-                    $account->license_key = $encryptedLicense;
-                    $account->save();
-                    return response()->json([
-                        'licenseKey' => $encryptedLicense,
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'error' => 'شماره تماس با توکن مطابقت ندارد.',
-                    ], 404);
-                }
+            if ($account) {
+                $account->license_key = $encryptedLicense;
+                $account->save();
+                return response()->json([
+                    'licenseKey' => $encryptedLicense,
+                ], 200);
             } else {
-                if (!$account) {
-                    return response()->json([
-                        'error' => 'نوکن صحیح نیست.',
-                    ], 404);
-                }
-                if (!$user) {
-                    return response()->json([
-                        'error' => 'شماره تماس صحیح نیست.',
-                    ], 404);
-                }
+                return response()->json([
+                    'error' => 'نوکن صحیح نیست.',
+                ], 404);
             }
-
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
