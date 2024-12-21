@@ -165,15 +165,14 @@ class ApiController extends Controller
                 // Check if the user is associated with the account
                 if ($user->account_id === $account->id) {
                     // Activate the license if not already active
-                    if (!$license->isActive) {
+                    if (!$license->isActive && $license->userActive != $user->id) {
                         $license->isActive = true;
                         $license->userActive = $user->id;
                         $license->save();
-                    }
-                    else{
+                    } else {
                         $userActive = User::where('id', $license->userActive)->first();
                         return response()->json([
-                            'error' => 'لایسنس توسط کاربر.'.$userActive->username.'در حال استفاده است',
+                            'error' => 'لایسنس توسط کاربر.' . $userActive->username . 'در حال استفاده است',
                         ], 404);
                     }
                 } else {
