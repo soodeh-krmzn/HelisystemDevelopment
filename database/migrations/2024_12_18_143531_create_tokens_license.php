@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('licenses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('account_id');
-            $table->string('license');
+            $table->text('license');
             $table->boolean('status')->default(0);
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->timestamps();
