@@ -170,6 +170,12 @@ class ApiController extends Controller
                         $license->userActive = $user->id;
                         $license->save();
                     }
+                    else{
+                        $userActive = User::where('id', $license->userActive)->first();
+                        return response()->json([
+                            'error' => 'لایسنس توسط کاربر.'.$userActive->username.'در حال استفاده است',
+                        ], 404);
+                    }
                 } else {
                     return response()->json([
                         'error' => 'شماره تماس با حساب لایسنس مطابقت ندارد.',
