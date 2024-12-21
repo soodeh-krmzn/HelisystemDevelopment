@@ -75,6 +75,7 @@ class ApiController extends Controller
 
             $pcToken = $validatedData['pc_token'];
             $systemCode = $validatedData['system_code'];
+            $username = $validatedData['username'];
 
             $licenseData = [
                 'pc_token' => $pcToken,
@@ -86,17 +87,32 @@ class ApiController extends Controller
             $encryptedLicense = Crypt::encryptString(json_encode($licenseData));
 
             $account = Account::where('pc_token', $pcToken)->first();
+            $user = User::where('username', $username)->first();
 
-            if ($account) {
-                $account->license_key = $encryptedLicense;
-                $account->save();
-                return response()->json([
-                    'licenseKey' => $encryptedLicense,
-                ], 200);
+            if ($account && $user) {
+                if ($user->account_id === $account->id) {
+                    $account->license_key = $encryptedLicense;
+                    $account->save();
+                    return response()->json([
+                        'licenseKey' => $encryptedLicense,
+                        'user' => $user,
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'error' => 'شماره تماس با حساب مطابقت ندارد.',
+                    ], 404);
+                }
             } else {
-                return response()->json([
-                    'error' => 'نوکن صحیح نیست.',
-                ], 404);
+                if (!$account) {
+                    return response()->json([
+                        'error' => 'نوکن صحیح نیست.',
+                    ], 404);
+                }
+                if (!$user) {
+                    return response()->json([
+                        'error' => 'شماره تماس صحیح نیست.',
+                    ], 404);
+                }
             }
         } catch (\Exception $e) {
             return response()->json([
