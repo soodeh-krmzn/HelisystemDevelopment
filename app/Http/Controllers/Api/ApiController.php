@@ -149,17 +149,16 @@ class ApiController extends Controller
 
         try {
             $license = License::where('license', $inputLicenseKey)->first();
+            if (!$license) {
+                return response()->json([
+                    'error' => 'لایسنسی معتبر نیست.',
+                ], 404);
+            }
             $user = User::where('username', $inputUsername)->first();
             $account = $license->account;
 
-            if (!$license) {
-                return response()->json([
-                    'error' => 'لایسنسی یافت نشد.',
-                ], 404);
-            }
-
             if ($account && $user) {
-                if ($user->account_id === $account->id) {                    
+                if ($user->account_id === $account->id) {
                     $license->isActive = true;
                     $license->userActive = $user->id;
                 } else {
@@ -205,7 +204,7 @@ class ApiController extends Controller
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-               'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
+                'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
             ], 400);
         }
     }
