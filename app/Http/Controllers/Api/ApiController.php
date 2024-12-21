@@ -165,7 +165,7 @@ class ApiController extends Controller
                 // Check if the user is associated with the account
                 if ($user->account_id === $account->id) {
                     // Activate the license if not already active
-                    if (!$license->isActive && $license->userActive != $user->id) {
+                    if (!$license->isActive && $license->userActive == $user->id) {
                         $license->isActive = true;
                         $license->userActive = $user->id;
                         $license->save();
