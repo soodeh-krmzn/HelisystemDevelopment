@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('account_id');
             $table->text('license');
             $table->boolean('status')->default(0);
+            $table->boolean('isActive')->default(0);
+            $table->unsignedBigInteger('userActive')->nullable();
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->timestamps();
         });
