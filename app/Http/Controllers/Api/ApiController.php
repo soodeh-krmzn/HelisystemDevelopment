@@ -823,7 +823,7 @@ class ApiController extends Controller
             $productData = $request['includes']['Product'];
             $productModel = "App\\Models\\Sync\\Product";
 
-            $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
+            $productInstance = $productModel::on('useraccount')->where('uuid', $productData['uuid'])->first();
             if ($productInstance) {
                 $productInstance->timestamps = false;
                 $productInstance->fill($productData);
