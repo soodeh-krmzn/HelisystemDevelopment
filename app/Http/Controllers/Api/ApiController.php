@@ -208,7 +208,7 @@ class ApiController extends Controller
 
             return response()->json([
                 'user' => $user,
-                'license' => $license,
+                'license' => $license->license,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
