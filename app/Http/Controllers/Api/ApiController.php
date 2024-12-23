@@ -524,7 +524,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $this->account($account);
+        $tt = $this->account($account);
 
         try {
             $modelFullClassName = $request['model_name'];
@@ -536,7 +536,7 @@ class ApiController extends Controller
             }
 
             $modelInstance = new $modelClass;
-            $tt = $modelInstance->setConnection('useraccount');
+            $modelInstance->setConnection('useraccount');
             return response()->json(['data' => $tt], 200);
             $data = $request['data'];
             $id = $request['m_id'] ?? null;
