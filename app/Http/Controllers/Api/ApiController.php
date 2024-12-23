@@ -515,130 +515,135 @@ class ApiController extends Controller
 
     public function storeSyncData(Request $request)
     {
-        $accountId = $request->input('accountId');
-        $modelFullClassName = $request->input('model_name');
-        $data = $request->input('data');
-        $id = $request->input('m_id');
-        $uuid = $request->input('m_uuid');
-        $createdAt = $data['created_at'] ?? null;
-        $updatedAt = $data['updated_at'] ?? null;
+        $accountId = $request['accountId'];
+        $account = Account::findOrFail($accountId);
 
-        // Validate the provided model name
-        $modelName = basename(str_replace('\\', '/', $modelFullClassName));
-        $modelClass = "App\\Models\\Sync\\{$modelName}";
-
-        if (!class_exists($modelClass)) {
-            return response()->json(['error' => 'Invalid model name'], 400);
+        if (!$account) {
+            return response()->json(['error' => 'Account not found'], 404);
         }
-
+        $this->account($account);
         try {
-            // Retrieve account and establish a database connection dynamically
-            $account = Account::findOrFail($accountId);
 
+            $modelFullClassName = $request['model_name'];
+            $modelName = basename(str_replace('\\', '/', $modelFullClassName));
+            $modelClass = "App\\Models\\Sync\\{$modelName}";
+
+            if (!class_exists($modelClass)) {
+                return response()->json(['error' => 'Invalid model name'], 400);
+            }
+
+            $decrypted = $this->decrypt($account->db_name, $account->db_user, $account->db_pass);
             $dbConfig = [
-                'name' => $account->db_name,
-                'user' => $account->db_user,
-                'pass' => $account->db_pass,
+                'name' => $decrypted['name'],
+                'user' => $decrypted['user'],
+                'pass' => $decrypted['pass'],
             ];
 
             $database = new Database();
             $database->connect($dbConfig);
 
-            // Use the connection dynamically for the Sync model
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
 
-            // Handle record existence and update or create logic
-            $existingRecord = $uuid
-                ? $modelInstance->where('uuid', $uuid)->first()
-                : $modelInstance->find($id);
+            $data = $request['data'];
+            $id = $request['m_id'] ?? null;
+            $uuid = $request['m_uuid'] ?? null;
+            $createdAt = $data['created_at'] ?? null;
+            $updatedAt = $data['updated_at'] ?? null;
+
+            if ($uuid) {
+                $existingRecord = $modelInstance->where('uuid', $uuid)->first();
+            } else
+                $existingRecord = $modelInstance->find($id);
+
 
             if ($existingRecord) {
-                $this->updateRecord($existingRecord, $data, $request, $modelClass, $createdAt, $updatedAt);
+                unset($data['id']);
+                switch ($modelClass) {
+                    case 'App\\Models\\Sync\\Factor':
+                        $existingRecord = $this->syncFactor($existingRecord, $request);
+                        unset($data['person_id'], $data['game_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\FactorBody':
+                        $existingRecord = $this->syncFactorBody($existingRecord, $request);
+                        unset($data['factor_id'], $data['product_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\Game':
+                        $existingRecord = $this->syncGame($existingRecord, $request);
+                        unset($data['person_id'], $data['game_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\GameMeta':
+                        $existingRecord = $this->syncGameMeta($existingRecord, $request);
+                        unset($data['g_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\Payment':
+                        $existingRecord = $this->syncPayment($existingRecord, $request);
+                        unset($data['person_id']);
+                        break;
+
+                        // case 'App\\Models\\Sync\\Person':
+                        //     $existingRecord = $this->syncPerson($existingRecord, $request);
+                        //     break;
+                    case 'App\\Models\\Sync\\PersonMeta':
+                        $existingRecord = $this->syncPersonMeta($existingRecord, $request);
+                        unset($data['person_id']);
+                        break;
+                }
+
+                $existingRecord->timestamps = false;
+                $existingRecord->fill($data);
+                if ($createdAt) $existingRecord->created_at = $createdAt;
+                if ($updatedAt) $existingRecord->updated_at = $updatedAt;
+                $existingRecord->save();
+
                 return response()->json([
-                    'message' => 'Record synced and updated successfully',
+                    'message' => 'Record synced updated',
                     'data' => $existingRecord->toArray(),
                 ], 200);
             } else {
                 $newRecord = new $modelClass($data);
-                $this->createRecord($newRecord, $data, $request, $modelClass, $createdAt, $updatedAt);
-                return response()->json([
-                    'message' => "Record synced successfully for model: {$modelClass}",
-                    'data' => $newRecord->toArray(),
-                ], 200);
+                switch ($modelClass) {
+                    case 'App\\Models\\Sync\\Factor':
+                        $newRecord = $this->syncFactor($newRecord, $request);
+                        break;
+
+                    case 'App\\Models\\Sync\\FactorBody':
+                        $newRecord = $this->syncFactorBody($newRecord, $request);
+                        unset($data['product_id']);
+                        break;
+
+                    case 'App\\Models\\Sync\\Game':
+                        $newRecord = $this->syncGame($newRecord, $request);
+                        break;
+
+                    case 'App\\Models\\Sync\\GameMeta':
+                        $newRecord = $this->syncGameMeta($newRecord, $request);
+                        break;
+
+                    case 'App\\Models\\Sync\\Payment':
+                        $newRecord = $this->syncPayment($newRecord, $request);
+                        break;
+                    case 'App\\Models\\Sync\\PersonMeta':
+                        $newRecord = $this->syncPersonMeta($newRecord, $request);
+                        break;
+                }
+
+                $newRecord->timestamps = false;
+                if ($createdAt) $newRecord->created_at = $createdAt;
+                if ($updatedAt) $newRecord->updated_at = $updatedAt;
+                $newRecord->save();
+
+                return response()->json(['message' => 'Record synced successfully model name->' . $modelClass, 'data' => $newRecord->toArray()], 200);
             }
         } catch (\Exception $e) {
             Log::error("Sync failed: " . $e->getMessage());
-            return response()->json(['error' => 'Failed to sync data. ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to sync data' . $e->getMessage()], 500);
         }
     }
-
-    protected function updateRecord($existingRecord, $data, $request, $modelClass, $createdAt, $updatedAt)
-    {
-        unset($data['id']);
-        switch ($modelClass) {
-            case 'App\\Models\\Sync\\Factor':
-                $existingRecord = $this->syncFactor($existingRecord, $request);
-                unset($data['person_id'], $data['game_id']);
-                break;
-            case 'App\\Models\\Sync\\FactorBody':
-                $existingRecord = $this->syncFactorBody($existingRecord, $request);
-                unset($data['factor_id'], $data['product_id']);
-                break;
-            case 'App\\Models\\Sync\\Game':
-                $existingRecord = $this->syncGame($existingRecord, $request);
-                unset($data['person_id'], $data['game_id']);
-                break;
-            case 'App\\Models\\Sync\\GameMeta':
-                $existingRecord = $this->syncGameMeta($existingRecord, $request);
-                unset($data['g_id']);
-                break;
-            case 'App\\Models\\Sync\\Payment':
-                $existingRecord = $this->syncPayment($existingRecord, $request);
-                unset($data['person_id']);
-                break;
-            case 'App\\Models\\Sync\\PersonMeta':
-                $existingRecord = $this->syncPersonMeta($existingRecord, $request);
-                unset($data['person_id']);
-                break;
-        }
-
-        $existingRecord->timestamps = false;
-        $existingRecord->fill($data);
-        if ($createdAt) $existingRecord->created_at = $createdAt;
-        if ($updatedAt) $existingRecord->updated_at = $updatedAt;
-        $existingRecord->save();
-    }
-    protected function createRecord($newRecord, $data, $request, $modelClass, $createdAt, $updatedAt)
-    {
-        switch ($modelClass) {
-            case 'App\\Models\\Sync\\Factor':
-                $newRecord = $this->syncFactor($newRecord, $request);
-                break;
-            case 'App\\Models\\Sync\\FactorBody':
-                $newRecord = $this->syncFactorBody($newRecord, $request);
-                unset($data['product_id']);
-                break;
-            case 'App\\Models\\Sync\\Game':
-                $newRecord = $this->syncGame($newRecord, $request);
-                break;
-            case 'App\\Models\\Sync\\GameMeta':
-                $newRecord = $this->syncGameMeta($newRecord, $request);
-                break;
-            case 'App\\Models\\Sync\\Payment':
-                $newRecord = $this->syncPayment($newRecord, $request);
-                break;
-            case 'App\\Models\\Sync\\PersonMeta':
-                $newRecord = $this->syncPersonMeta($newRecord, $request);
-                break;
-        }
-
-        $newRecord->timestamps = false;
-        if ($createdAt) $newRecord->created_at = $createdAt;
-        if ($updatedAt) $newRecord->updated_at = $updatedAt;
-        $newRecord->save();
-    }
-
 
     public function syncFactor($record, $request)
     {
