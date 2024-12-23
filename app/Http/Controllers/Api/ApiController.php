@@ -544,9 +544,9 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             if ($uuid) {
-                $existingRecord = $modelInstance->setConnection->where('uuid', $uuid)->first();
+                $existingRecord = $modelInstance->where('uuid', $uuid)->first();
             } else
-                $existingRecord = $modelInstance->setConnection->find($id);
+                $existingRecord = $modelInstance->find($id);
 
 
             if ($existingRecord) {
