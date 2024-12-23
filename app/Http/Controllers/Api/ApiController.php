@@ -522,12 +522,8 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
         $this->account($account);
-        $connection = DB::connection('useraccount');
-        $dbName = $connection->getDatabaseName();
-        return response()->json(['message' => 'Database connected successfully', 'dbName' => $dbName], 200);
-
+        $connection = DB::connection('useraccount');       
         try {
-
 
             $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -539,6 +535,8 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
+            $dbName = $modelInstance->getDatabaseName();
+            return response()->json(['message' => 'Database connected successfully', 'dbName' => $dbName], 200);
 
             $data = $request['data'];
             $id = $request['m_id'] ?? null;
