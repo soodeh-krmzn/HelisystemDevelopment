@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('licenses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('account_id');
-            $table->text('license');
+            $table->text('license')->unique();
             $table->string('systemCode');
             $table->boolean('status')->default(0);
             $table->boolean('isActive')->default(0);
