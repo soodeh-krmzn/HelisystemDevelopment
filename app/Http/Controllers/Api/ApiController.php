@@ -410,11 +410,11 @@ class ApiController extends Controller
             $dbName = $connection->getDatabaseName();
             $connectionName = $connection->getName();
 
-            $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
-            $data = $connection->select($query);
+            // $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
+            // $data = $connection->select($query);
             // $data = DB::connection('useraccount')->select($query);
             return response()->json([
-                'data' => $data,
+                // 'data' => $data,
                 'connected_to' => [
                     'database' => $dbName,
                     'connection' => $connectionName,
