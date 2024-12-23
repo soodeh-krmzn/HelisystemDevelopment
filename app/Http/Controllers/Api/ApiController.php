@@ -525,7 +525,7 @@ class ApiController extends Controller
         }
 
         $tt = $this->account($account);
-
+        return response()->json(['data' => $tt], 200);
         try {
             $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -537,7 +537,7 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
-            return response()->json(['data' => $tt], 200);
+            
             $data = $request['data'];
             $id = $request['m_id'] ?? null;
             $uuid = $request['m_uuid'] ?? null;
