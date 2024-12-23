@@ -522,9 +522,9 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $this->account($account);
-        DB::connection('useraccount');
         try {
+            $this->account($account);
+            DB::connection('useraccount');
             $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
             $modelClass = "App\\Models\\Sync\\{$modelName}";
