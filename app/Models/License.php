@@ -10,7 +10,7 @@ class License extends Model
 {
     use HasFactory;
     protected $table = 'licenses';
-    protected $fillable = ['account_id', 'license' , 'status'];
+    protected $fillable = ['account_id', 'license' , 'status' , 'systemCode'];
 
     public function account()
     {

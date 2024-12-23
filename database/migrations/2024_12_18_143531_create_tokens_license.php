@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('account_id');
             $table->text('license');
+            $table->string('systemCode');
             $table->boolean('status')->default(0);
             $table->boolean('isActive')->default(0);
             $table->unsignedBigInteger('userActive')->nullable();

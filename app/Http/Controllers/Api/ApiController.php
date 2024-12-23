@@ -103,6 +103,7 @@ class ApiController extends Controller
                         $license = new License();
                         $license->account_id = $account->id;
                         $license->license = $encryptedLicense;
+                        $license->systemCode = $systemCode;
                         $license->status = 1;
                         $license->save();
 
@@ -515,8 +516,6 @@ class ApiController extends Controller
 
     public function storeSyncData(Request $request)
     {
-
-
         $accountId = $request['accountId'];
         $account = Account::findOrFail($accountId);
 
