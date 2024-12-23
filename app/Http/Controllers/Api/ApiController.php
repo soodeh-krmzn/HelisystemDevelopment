@@ -263,6 +263,7 @@ class ApiController extends Controller
 
         $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
         DB::purge('useraccount');
+        DB::reconnect('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
             'host' => 'localhost',
@@ -279,7 +280,6 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
-        return $decrypted;
     }
     public function connectdb(Request $request)
     {
@@ -524,8 +524,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $tt = $this->account($account);
-        return response()->json(['data' => $tt], 200);
+        $this->account($account);
         try {
             $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
@@ -545,9 +544,9 @@ class ApiController extends Controller
             $updatedAt = $data['updated_at'] ?? null;
 
             if ($uuid) {
-                $existingRecord = $modelInstance->where('uuid', $uuid)->first();
+                $existingRecord = $modelInstance->setConnection->where('uuid', $uuid)->first();
             } else
-                $existingRecord = $modelInstance->find($id);
+                $existingRecord = $modelInstance->setConnection->find($id);
 
 
             if ($existingRecord) {
