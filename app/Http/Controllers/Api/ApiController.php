@@ -535,7 +535,8 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
-            $dbName = $modelInstance->getDatabaseName();
+            $connection = $modelInstance->getConnection();
+            $dbName = $connection->getDatabaseName();
             return response()->json(['message' => 'Database connected successfully', 'dbName' => $dbName], 200);
 
             $data = $request['data'];
