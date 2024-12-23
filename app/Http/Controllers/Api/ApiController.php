@@ -263,6 +263,7 @@ class ApiController extends Controller
 
         $decrypted = $this->decrypt($db_name, $db_user, $db_pass);
         DB::purge('useraccount');
+        DB::reconnect('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
             'host' => 'localhost',
@@ -401,25 +402,11 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        
-        // return response()->json(data: ['info' => $res]);
 
         try {
             $this->account($account);
-            $connection = DB::connection('useraccount');
-            $dbName = $connection->getDatabaseName();
-            $connectionName = $connection->getName();
-
-            // $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
-            // $data = $connection->select($query);
-            // $data = DB::connection('useraccount')->select($query);
-            return response()->json([
-                // 'data' => $data,
-                'connected_to' => [
-                    'database' => $dbName,
-                    'connection' => $connectionName,
-                ],
-            ]);
+            $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
+            $data = DB::connection('useraccount')->select($query);
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
