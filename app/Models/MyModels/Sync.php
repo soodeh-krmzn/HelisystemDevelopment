@@ -11,11 +11,11 @@ class Sync extends Model
     use HasFactory;
 
     protected $connection = 'useraccount';
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
+    // public function __construct(array $attributes = [])
+    // {
+    //     parent::__construct($attributes);
 
-        $db = new Database();
-        $db->connect();
-    }
+    //     $db = new Database();
+    //     $db->connect();
+    // }
 }

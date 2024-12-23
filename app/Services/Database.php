@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use PDO;
@@ -6,17 +7,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
+
 class Database
 {
-    public function connect()
+    public function connect($dbConfig)
     {
         DB::purge('useraccount');
         Config::set('database.connections.useraccount', [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => '3db',
-            'username' => '3user',
-            'password' => 'jVHRfOQnDQ3v',
+            'database' => $dbConfig['name'],
+            'username' => $dbConfig['user'],
+            'password' => $dbConfig['pass'],
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
