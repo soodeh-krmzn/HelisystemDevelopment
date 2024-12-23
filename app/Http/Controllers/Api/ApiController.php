@@ -524,6 +524,7 @@ class ApiController extends Controller
         }
 
         $this->account($account);
+        DB::connection('useraccount');
         try {
             $modelFullClassName = $request['model_name'];
             $modelName = basename(str_replace('\\', '/', $modelFullClassName));
