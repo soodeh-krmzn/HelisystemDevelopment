@@ -279,6 +279,7 @@ class ApiController extends Controller
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ]);
+        return $decrypted;
     }
     public function connectdb(Request $request)
     {
@@ -535,8 +536,8 @@ class ApiController extends Controller
             }
 
             $modelInstance = new $modelClass;
-            $modelInstance->setConnection('useraccount');
-
+            $tt = $modelInstance->setConnection('useraccount');
+            return response()->json(['data' => $tt], 200);
             $data = $request['data'];
             $id = $request['m_id'] ?? null;
             $uuid = $request['m_uuid'] ?? null;
