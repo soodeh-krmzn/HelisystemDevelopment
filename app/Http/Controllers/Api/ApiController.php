@@ -406,8 +406,20 @@ class ApiController extends Controller
         // return response()->json(data: ['info' => $res]);
 
         try {
+            $connection = DB::connection('useraccount');
+            $dbName = $connection->getDatabaseName();
+            $connectionName = $connection->getName();
+
             $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
-            $data = DB::connection('useraccount')->select($query);
+            $data = $connection->select($query);
+            // $data = DB::connection('useraccount')->select($query);
+            return response()->json([
+                'data' => $data,
+                'connected_to' => [
+                    'database' => $dbName,
+                    'connection' => $connectionName,
+                ],
+            ]);
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
@@ -536,7 +548,7 @@ class ApiController extends Controller
 
             $modelInstance = new $modelClass;
             $modelInstance->setConnection('useraccount');
-            
+
             $data = $request['data'];
             $id = $request['m_id'] ?? null;
             $uuid = $request['m_uuid'] ?? null;
