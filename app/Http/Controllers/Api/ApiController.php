@@ -402,10 +402,11 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        $this->account($account);
+        
         // return response()->json(data: ['info' => $res]);
 
         try {
+            $this->account($account);
             $connection = DB::connection('useraccount');
             $dbName = $connection->getDatabaseName();
             $connectionName = $connection->getName();
