@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Option;
+use App\Models\User;
 
 function activeMenu($route)
 {
@@ -63,5 +64,9 @@ function price($amount)
 function get_option($key){
 $option=new Option;
 return $option->get_option($key);
+}
+
+function findUser($id){
+    return User::findOrFail($id);
 }
 

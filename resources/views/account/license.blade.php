@@ -33,10 +33,11 @@
                                                 @foreach ($licenses as $license)
                                                     <tr>
                                                         <td>{{ $loop->index + 1 }}</td>
-                                                        <td>{{ $license->license }}</td>
+                                                        <td class="text-break">{{ $license->license }}</td>
                                                         <td>{{ $license->systemCode }}</td>
                                                         <td>{{ $license->status == 0 ? 'غیر فعال' : 'فعال' }}</td>
                                                         <td>{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</td>
+                                                        <td>{{ findUser($license->userActive)->getFullName }}</td>
                                                         <td id="status-td"
                                                             class="{{ $license->status == 0 ? 'bg-danger' : 'bg-success' }} text-center">
                                                             <select name="status" id="status" class="form-control"
