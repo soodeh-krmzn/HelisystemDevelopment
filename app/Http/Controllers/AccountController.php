@@ -198,8 +198,9 @@ class AccountController extends Controller
     }
 
 
-    public function changeLicenseStatus(Request $request, License $license)
+    public function changeLicenseStatus(Request $request, $licenseID)
     {
+        $license = License::find($licenseID);
         $license->status = $request->status;
         $license->save();
 
