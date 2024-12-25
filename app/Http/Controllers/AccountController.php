@@ -193,17 +193,24 @@ class AccountController extends Controller
     public function license(Account $account)
     {
         $licenses = $account->licenses()->get();
-        return view('account.license', compact('licenses' , 'account'));
+        return view('account.license', compact('licenses', 'account'));
     }
 
 
     public function changeLicenseStatus(Request $request, Account $account)
     {
-        $license = $account->licenses()->findOrFail($request->license_id);
-        $license->status = $request->status;
+        $validated = $request->validate([
+            'license_id' => 'required|exists:licenses,id',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $license = $account->licenses()->findOrFail($validated['license_id']);
+        $license->status = $validated['status'];
         $license->save();
 
-        Alert::success("موفق", "وضعیت لایسنس با موفقیت تغییر کرد.");
-        return back();
+        return response()->json([
+            'message' => 'وضعیت لایسنس با موفقیت تغییر کرد.',
+            'status' => $license->status,
+        ], 200);
     }
 }
