@@ -4,11 +4,20 @@
     <style>
         .scrollable {
             max-width: 200px;
-            /* Adjust as needed */
-            max-height: 50px;
-            overflow: auto;
-            white-space: pre-wrap;
+            /* Adjust the width as needed */
+            max-height: 4.5em;
+            /* Approx. 3 lines of text */
+            overflow: hidden;
+            text-overflow: ellipsis;
             word-wrap: break-word;
+            white-space: normal;
+            /* Allows wrapping */
+            cursor: pointer;
+        }
+
+        .scrollable-expanded {
+            max-height: none;
+            overflow: auto;
         }
     </style>
 @endsection
@@ -43,7 +52,8 @@
                                                 @foreach ($licenses as $license)
                                                     <tr>
                                                         <td>{{ $loop->index + 1 }}</td>
-                                                        <td class="scrollable">{{ $license->license }}</td>
+                                                        <td class="scrollable" ondblclick="expandText(this)">
+                                                            {{ $license->license }}</td>
                                                         <td>{{ $license->systemCode }}</td>
                                                         <td>{{ $license->status == 0 ? 'غیر فعال' : 'فعال' }}</td>
                                                         <td>{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</td>
@@ -90,6 +100,12 @@
     </section>
 @endsection
 @section('scripts')
+    <script>
+        function expandText(element) {
+            // Toggle the expanded class to show full text
+            element.classList.toggle('scrollable-expanded');
+        }
+    </script>
     <script>
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
