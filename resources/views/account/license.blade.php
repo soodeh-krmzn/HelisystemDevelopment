@@ -1,6 +1,16 @@
 @extends('parts.master')
 @section('title', 'مجوز آفلاین')
 @section('styles')
+    <style>
+        .scrollable {
+            max-width: 200px;
+            /* Adjust as needed */
+            max-height: 50px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
 @endsection
 @section('content')
     <section class="content">
@@ -33,11 +43,12 @@
                                                 @foreach ($licenses as $license)
                                                     <tr>
                                                         <td>{{ $loop->index + 1 }}</td>
-                                                        <td class="text-break">{{ $license->license }}</td>
+                                                        <td class="scrollable">{{ $license->license }}</td>
                                                         <td>{{ $license->systemCode }}</td>
                                                         <td>{{ $license->status == 0 ? 'غیر فعال' : 'فعال' }}</td>
                                                         <td>{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</td>
-                                                        <td>{{ optional(findUser($license->userActive))->getFullName() }}</td>
+                                                        <td>{{ optional(findUser($license->userActive))->getFullName() }}
+                                                        </td>
                                                         <td id="status-td"
                                                             class="{{ $license->status == 0 ? 'bg-danger' : 'bg-success' }} text-center">
                                                             <select name="status" id="status" class="form-control"
