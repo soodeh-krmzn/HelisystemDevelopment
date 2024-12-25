@@ -28,7 +28,7 @@
                                     @if ($licenses->count() > 0)
                                         <table class="table table-bordered table-hover m-0">
                                             <thead>
-                                                <tr>
+                                                <tr  class="text-center">
                                                     <th>#</th>
                                                     <th>مجوز</th>
                                                     <th>کد سیستم</th>
@@ -39,7 +39,7 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($licenses as $license)
-                                                    <tr>
+                                                    <tr class="text-center">
                                                         <td>{{ $loop->index + 1 }}</td>
                                                         <td class="scrollable">{{ $license->license }}</td>
                                                         <td>{{ $license->systemCode }}</td>
