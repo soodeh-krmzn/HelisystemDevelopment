@@ -193,7 +193,7 @@ class AccountController extends Controller
     public function license(Account $account)
     {
         $licenses = $account->licenses();
-        return view('account.license', compact('licenses'));
+        return view('account.license', compact('licenses' , 'account'));
     }
 
 
