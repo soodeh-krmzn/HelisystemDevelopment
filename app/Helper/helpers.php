@@ -66,7 +66,7 @@ $option=new Option;
 return $option->get_option($key);
 }
 
-function findUser($id){
-    return User::findOrFail($id);
+function findUser($id) {
+    return User::find($id);
 }
 
