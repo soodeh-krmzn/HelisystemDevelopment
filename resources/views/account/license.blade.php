@@ -44,11 +44,19 @@
                                                         <td>{{ $loop->index + 1 }}</td>
                                                         <td class="scrollable">{{ $license->license }}</td>
                                                         <td>{{ $license->systemCode }}</td>
-                                                        <td>{{ $license->status == 0 ? 'غیر فعال' : 'فعال' }}</td>
+                                                        {{-- <td>{{ $license->status == 0 ? 'غیر فعال' : 'فعال' }}</td> --}}
+                                                        <td>
+                                                            <button
+                                                                class="btn btn-sm license-status-btn {{ $license->status ? 'btn-success' : 'btn-danger' }}"
+                                                                data-license-id="{{ $license->id }}"
+                                                                data-license-status="{{ $license->status }}">
+                                                                {{ $license->status ? 'فعال' : 'غیرفعال' }}
+                                                            </button>
+                                                        </td>
                                                         <td>{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</td>
                                                         <td>{{ optional(findUser($license->userActive))->getFullName() }}
                                                         </td>
-                                                        <td id="status-td"
+                                                        {{-- <td id="status-td"
                                                             class="{{ $license->status == 0 ? 'bg-danger' : 'bg-success' }} text-center">
                                                             <select name="status" id="status" class="form-control"
                                                                 data-account_id="{{ $license->account->id }}"
@@ -60,7 +68,7 @@
                                                                     {{ $license->status == 0 ? 'selected' : '' }}>غیرفعال
                                                                 </option>
                                                             </select>
-                                                        </td>
+                                                        </td> --}}
                                                         {{-- <td>
                                                             <a href="{{ route('user.changePassword', $user->id) }}"
                                                                 class="btn btn-secondary btn-sm"><i
@@ -90,38 +98,55 @@
 @endsection
 @section('scripts')
     <script>
-        $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
         $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+            $(document.body).on("click", ".license-status-btn", function() {
+                const button = $(this);
+                const licenseId = button.data("license-id");
+                const currentStatus = button.data("license-status");
+                const newStatus = currentStatus === 1 ? 0 : 1;
 
-            $(document.body).on("change", "#status", function() {
-                const status = $(this).val();
-                const licenseId = $(this).data("license_id");
-                const accountId = $(this).data("account_id");
-                const rowElement = $(this).closest("td");
+                // SweetAlert2 confirmation
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: `وضعیت لایسنس به ${newStatus ? 'فعال' : 'غیرفعال'} تغییر خواهد کرد.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'بله تغییر بده',
+                    cancelButtonText: 'لغو'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX request to update the status
+                        $.ajax({
+                            type: "POST",
+                            url: `/account-license-status/${licenseId}`,
+                            data: {
+                                status: newStatus,
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            success: function(response) {
+                                // Update the button text and class
+                                button.data("license-status", newStatus);
+                                button.text(newStatus ? 'فعال' : 'غیرفعال');
+                                button
+                                    .toggleClass("btn-success", newStatus === 1)
+                                    .toggleClass("btn-danger", newStatus === 0);
 
-                $.ajax({
-                    type: "POST",
-                    url: `/account-license-status/${accountId}`,
-                    data: {
-                        license_id: licenseId,
-                        status: status
-                    },
-                    success: function(response) {
-                        rowElement
-                            .removeClass("bg-danger bg-success")
-                            .addClass(response.status == 1 ? "bg-success" : "bg-danger");
-                        alert(response.message);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                        alert("خطا در تغییر وضعیت لایسنس");
+                                Swal.fire(
+                                    'موفق',
+                                    'وضعیت لایسنس با موفقیت تغییر کرد.',
+                                    'success'
+                                );
+                            },
+                            error: function(error) {
+                                Swal.fire(
+                                    'خطا',
+                                    'مشکلی در تغییر وضعیت لایسنس وجود دارد.',
+                                    'error'
+                                );
+                            }
+                        });
                     }
                 });
             });

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\SMS;
 use App\Models\Option;
 use App\Models\Account;
+use App\Models\License;
 use App\Models\Package;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Str;
@@ -197,20 +198,14 @@ class AccountController extends Controller
     }
 
 
-    public function changeLicenseStatus(Request $request, Account $account)
+    public function changeLicenseStatus(Request $request, License $license)
     {
-        $validated = $request->validate([
-            'license_id' => 'required|exists:licenses,id',
-            'status' => 'required|in:0,1',
-        ]);
-
-        $license = $account->licenses()->findOrFail($validated['license_id']);
-        $license->status = $validated['status'];
+        $license->status = $request->status;
         $license->save();
 
         return response()->json([
-            'message' => 'وضعیت لایسنس با موفقیت تغییر کرد.',
-            'status' => $license->status,
-        ], 200);
+            'message' => 'وضعیت لایسنس تغییر کرد.',
+            'status' => $license->status
+        ]);
     }
 }
