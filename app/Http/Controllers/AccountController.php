@@ -189,4 +189,21 @@ class AccountController extends Controller
         }
         dd($Errors);
     }
+
+    public function license(Account $account)
+    {
+        $licenses = $account->licenses();
+        return view('account.license', compact('licenses'));
+    }
+
+
+    public function changeLicenseStatus(Request $request, Account $account)
+    {
+        $license = $account->licenses()->findOrFail($request->license_id);
+        $license->status = $request->status;
+        $license->save();
+
+        Alert::success("موفق", "وضعیت لایسنس با موفقیت تغییر کرد.");
+        return back();
+    }
 }

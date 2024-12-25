@@ -124,14 +124,14 @@
                                                 <td style="direction: ltr">
                                                     {{ per_number($account->daysLeft()) }}
                                                     /{{ per_number($account->days) }}
-                                                    <br>({{ $account->package?->name??'نامشخص' }})
+                                                    <br>({{ $account->package?->name ?? 'نامشخص' }})
                                                 </td>
                                                 <td>
                                                     @if ($account->sms_charge)
-                                                    {{ $account->sms_charge  }}<br>
-                                                    ({{$account?->sms_package->name??"نامشخص"}})
+                                                        {{ $account->sms_charge }}<br>
+                                                        ({{ $account?->sms_package->name ?? 'نامشخص' }})
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 </td>
                                                 <td>
@@ -173,6 +173,8 @@
                                                     <a href="https://helione.ir/login-as/Ux2kC5tptbhGO8KTGsc/{{ $account->id }}"
                                                         target="_blanck" class="btn btn-info btn-sm"><i
                                                             class="fa fa-send"></i></a>
+                                                    <a href="{{ route('account.license', $account) }}"
+                                                        class="btn btn-info btn-sm"><i class="fa fa-key"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach

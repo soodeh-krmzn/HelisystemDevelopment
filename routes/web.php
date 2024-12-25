@@ -74,6 +74,11 @@ Route::middleware('auth')->group(function () {
     Route::get('account/{account}/database', [AccountController::class, 'showDb'])->name('account.showDatabase');
     Route::put('account/{account}/database', [AccountController::class, 'storeDb'])->name('account.storeDatabase');
     Route::get('account-make-privilages', [AccountController::class, 'privilages']);
+    Route::get('account/{account}/license', [AccountController::class, 'license'])->name('account.license');
+    Route::post('account-license-status/{account}', [AccountController::class, 'changeLicenseStatus'])->name('account.changeLicenseStatus');
+
+
+   
 
     // User
     Route::resource('user', UserController::class);
