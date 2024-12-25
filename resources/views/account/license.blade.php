@@ -16,7 +16,7 @@
                         <div class="card-body p-0 table-responsive">
                             <div class="row">
                                 <div class="col-md-12">
-                                    @if ($users->count() > 0)
+                                    @if ($licenses->count() > 0)
                                         <table class="table table-bordered table-hover m-0">
                                             <thead>
                                                 <tr>
