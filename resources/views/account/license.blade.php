@@ -140,12 +140,16 @@
                                     'success'
                                 );
                             },
-                            error: function(error) {
-                                Swal.fire(
-                                    'خطا',
-                                    'مشکلی در تغییر وضعیت لایسنس وجود دارد.',
-                                    'error'
-                                );
+                            error: function(jqXHR) {
+                                let errorMessage = jqXHR.responseJSON && jqXHR
+                                    .responseJSON.error ?
+                                    jqXHR.responseJSON.error :
+                                    "{{ __('خطا در ارتباط با سرور.') }}";
+                                Swal.fire({
+                                    title: "{{ __('اخطار') }}",
+                                    text: errorMessage,
+                                    icon: "error"
+                                });
                             }
                         });
                     }
