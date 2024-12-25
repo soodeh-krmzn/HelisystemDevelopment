@@ -51,7 +51,9 @@
                                                                 {{ $license->status ? 'فعال' : 'غیرفعال' }}
                                                             </button>
                                                         </td>
-                                                        <td class="badge bg-{{ $license->isActive == 0 ? 'secondary' : 'success'}}">{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</td>
+                                                        <td> <span
+                                                                class="badge bg-{{ $license->isActive == 0 ? 'secondary' : 'success' }}">{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</span>
+                                                        </td>
                                                         <td>{{ optional(findUser($license->userActive))->getFullName() }}
                                                         </td>
                                                     </tr>
