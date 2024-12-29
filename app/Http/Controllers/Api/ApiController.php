@@ -943,7 +943,46 @@ class ApiController extends Controller
         return $record;
     }
 
+    public function deactiveLicense(Request $request)
+    {
+        $validatedData = $request->validate([
+            'license' => 'required|string',
+            'username' => 'required|string',
+        ]);
 
+        $inputLicense = $validatedData['license'];
+        $inputUsername = $validatedData['username'];
+        $user = User::where('username', $inputUsername)->first();
+        if (!$user) {
+            return response()->json([
+                'error' => 'کاربری با این نام کاربری یافت نشد.',
+            ], 404);
+        }
+        try {
+            $license = License::where('license', $inputLicense)->first();
+            if ($license) {
+                if ($license->userActive != $user->id) {
+                    return response()->json([
+                        'error' => 'مجوز عبور وارد شده برای این کاربر فعال نیست.',
+                    ], 404);
+                }
+                $license->isActive = 0;
+                $license->userActive = null;
+                $license->save();
+                return response()->json([
+                    'message' => 'لایسنس غیرفعال شد.',
+                ], 200);
+            } else {
+                return response()->json([
+                    'error' => 'لایسنس وارد شده معتبر نیست.',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
     // public function storeSyncData(Request $request)
     // {
     //     $validated = $request->validate([
