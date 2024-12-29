@@ -961,6 +961,11 @@ class ApiController extends Controller
         try {
             $license = License::where('license', $inputLicense)->first();
             if ($license) {
+                if($license->isActive == 0){
+                    return response()->json([
+                        'error' => 'لایسنس وارد شده غیرفعال است.',
+                    ], 404);
+                }
                 if ($license->userActive != $user->id) {
                     return response()->json([
                         'error' => 'مجوز عبور وارد شده برای این کاربر فعال نیست.',
