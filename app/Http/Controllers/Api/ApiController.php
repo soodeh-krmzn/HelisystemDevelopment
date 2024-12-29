@@ -943,6 +943,50 @@ class ApiController extends Controller
         return $record;
     }
 
+    public function checkLicenseActivaation(Request $request)
+    {
+        $validatedData = $request->validate([
+            'license' => 'required|string',
+            'username' => 'required|string',
+        ]);
+
+        $inputLicense = $validatedData['license'];
+        $inputUsername = $validatedData['username'];
+        $user = User::where('username', $inputUsername)->first();
+        if (!$user) {
+            return response()->json([
+                'error' => 'کاربری با این نام کاربری یافت نشد.',
+            ], 404);
+        }
+        try {
+            $license = License::where('license', $inputLicense)->first();
+            if ($license) {
+                if ($license->userActive != $user->id) {
+                    return response()->json([
+                        'error' => 'مجوز عبور وارد شده برای این کاربر فعال نیست.',
+                    ], 403);
+                }
+                if ($license->isActive == 1) {
+                    return response()->json([
+                        'message' => 'لایسنس وارد شده فعال است.',
+                    ], 200);
+                }
+                else {
+                    return response()->json([
+                        'message' => 'لایسنس وارد شده غیرفعال است.',
+                    ], 200);
+                }                
+            } else {
+                return response()->json([
+                    'error' => 'لایسنس وارد شده معتبر نیست.',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
     public function deactiveLicense(Request $request)
     {
         $validatedData = $request->validate([
@@ -961,7 +1005,7 @@ class ApiController extends Controller
         try {
             $license = License::where('license', $inputLicense)->first();
             if ($license) {
-                if($license->isActive == 0){
+                if ($license->isActive == 0) {
                     return response()->json([
                         'error' => 'لایسنس وارد شده غیرفعال است.',
                     ], 404);

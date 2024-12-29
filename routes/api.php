@@ -38,6 +38,7 @@ Route::post('/data-record-collect', [ApiController::class, 'dataRecordCollect'])
 Route::post('/sync/store', [ApiController::class, 'storeSyncData']);
 Route::post('/update-sync-status', [ApiController::class, 'updateStatus']);
 Route::post('/deactive-license', [ApiController::class, 'deactiveLicense']);
+Route::post('/check-license-activation', [ApiController::class, 'checkLicenseActivaation']);
 
 
 // //User
