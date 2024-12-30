@@ -103,7 +103,7 @@ class ApiController extends Controller
                         $license = new License();
                         $license->account_id = $account->id;
                         $license->license = $encryptedLicense;
-                        $license->systemCode = $systemCode;
+                        $license->system_code = $systemCode;
                         $license->status = 1;
                         $license->save();
 
@@ -161,16 +161,16 @@ class ApiController extends Controller
 
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
-                    if (!$license->isActive) {
+                    if (!$license->is_active) {
                         // Activate the license with the current user
-                        $license->isActive = true;
-                        $license->userActive = $user->id;
+                        $license->is_active = true;
+                        $license->user_active = $user->id;
                         $license->save();
-                    } elseif ($license->userActive != $user->id) {
+                    } elseif ($license->user_active != $user->id) {
                         // License is active and used by another user
-                        $userActive = User::where('id', $license->userActive)->first();
+                        $user_active = User::where('id', $license->user_active)->first();
                         return response()->json([
-                            'error' => 'لایسنس توسط کاربر ' . $userActive->username . ' در حال استفاده است.',
+                            'error' => 'لایسنس توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
                         ], 404);
                     }
                 } else {
@@ -961,12 +961,12 @@ class ApiController extends Controller
         try {
             $license = License::where('license', $inputLicense)->first();
             if ($license) {
-                if ($license->userActive != $user->id) {
+                if ($license->user_active != $user->id) {
                     return response()->json([
                         'error' => 'مجوز عبور وارد شده برای این کاربر فعال نیست.',
                     ], 403);
                 }
-                if ($license->isActive == 1) {
+                if ($license->is_active == 1) {
                     return response()->json([
                         'message' => 'لایسنس وارد شده فعال است.',
                     ], 200);
@@ -1005,18 +1005,18 @@ class ApiController extends Controller
         try {
             $license = License::where('license', $inputLicense)->first();
             if ($license) {
-                if ($license->isActive == 0) {
+                if ($license->is_active == 0) {
                     return response()->json([
                         'error' => 'لایسنس وارد شده غیرفعال است.',
                     ], 404);
                 }
-                if ($license->userActive != $user->id) {
+                if ($license->user_active != $user->id) {
                     return response()->json([
                         'error' => 'مجوز عبور وارد شده برای این کاربر فعال نیست.',
                     ], 404);
                 }
-                $license->isActive = 0;
-                $license->userActive = null;
+                $license->is_active = 0;
+                $license->user_active = null;
                 $license->save();
                 return response()->json([
                     'message' => 'لایسنس غیرفعال شد.',

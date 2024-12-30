@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('account_id');
             $table->text('license')->unique();
-            $table->string('systemCode');
+            $table->string('system_code');
             $table->boolean('status')->default(0);
-            $table->boolean('isActive')->default(0);
-            $table->unsignedBigInteger('userActive')->nullable();
+            $table->boolean('is_active')->default(0);
+            $table->unsignedBigInteger('user_active')->nullable();
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->timestamps();
         });

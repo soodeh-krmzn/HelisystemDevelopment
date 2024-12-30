@@ -11,7 +11,7 @@ class License extends Model
 {
     use HasFactory ,SoftDeletes;
     protected $table = 'licenses';
-    protected $fillable = ['account_id', 'license' , 'status' , 'systemCode'];
+    protected $fillable = ['account_id', 'license' , 'status' , 'system_code', 'is_active', 'user_active'];
 
     public function account()
     {
