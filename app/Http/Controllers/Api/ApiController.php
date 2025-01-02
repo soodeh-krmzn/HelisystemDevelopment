@@ -95,10 +95,17 @@ class ApiController extends Controller
                     $license = License::where('account_id', $account->id)->first();
 
                     if ($license) {
-                        return response()->json([
-                            'licenseKey' => $license->license,
-                            'user' => $user,
-                        ], 200);
+                        if ($license->user_active != $user->id) {
+                            // License is active and used by another user
+                            $user_active = User::where('id', $license->user_active)->first();
+                            return response()->json([
+                                'error' => 'لایسنس توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
+                            ], 404);
+                        } else
+                            return response()->json([
+                                'licenseKey' => $license->license,
+                                'user' => $user,
+                            ], 200);
                     } else {
                         $license = new License();
                         $license->account_id = $account->id;
