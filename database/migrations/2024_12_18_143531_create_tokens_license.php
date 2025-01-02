@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('system_code');
             $table->boolean('status')->default(0);
             $table->boolean('is_active')->default(0);
-            $table->unsignedBigInteger('user_active')->nullable();
+            $table->unsignedBigInteger('user_active')->default(0);
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->timestamps();
         });
