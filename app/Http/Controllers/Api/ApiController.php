@@ -139,25 +139,40 @@ class ApiController extends Controller
     public function verifyLicense(Request $request)
     {
         $validatedData = $request->validate([
+            'pc_token' => 'required|string',
             'licenseKey' => 'required|string',
             'system_code' => 'required|string|max:255',
             'username' => 'required|string',
+            'password' => 'required|string'
         ]);
 
+        $inputPcToken = $validatedData['pc_token'];
         $inputLicenseKey = $validatedData['licenseKey'];
         $inputSystemCode = $validatedData['system_code'];
         $inputUsername = $validatedData['username'];
+        $inputPassword = $validatedData['password'];
 
         try {
+            $user = User::where('username', $inputUsername)->first();
+            if (!$user) {
+                return response()->json([
+                    'error' => 'کاربر یافت نشد.',
+                ], 404);
+            }
+            if (!Hash::check($inputPassword, $user->password)) {
+                return response()->json([
+                    'error' => 'رمز عبور اشتباه است.',
+                ], 401);
+            }
+
             $license = License::where('license', $inputLicenseKey)->first();
             if (!$license) {
                 return response()->json([
                     'error' => 'لایسنس معتبر نیست.',
                 ], 404);
             }
-
             $account = $license->account;
-            $user = User::where('username', $inputUsername)->first();
+
 
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
@@ -175,7 +190,7 @@ class ApiController extends Controller
                     }
                 } else {
                     return response()->json([
-                        'error' => 'شماره تماس با حساب لایسنس مطابقت ندارد.',
+                        'error' => 'مجوز عبور شما مطابق با حساب شما نیست.',
                     ], 404);
                 }
             } else {
@@ -186,7 +201,7 @@ class ApiController extends Controller
                 }
                 if (!$user) {
                     return response()->json([
-                        'error' => 'شماره تماس صحیح نیست.',
+                        'error' => 'کاربری با این مشخصات یافت نشد.',
                     ], 404);
                 }
             }
@@ -970,12 +985,11 @@ class ApiController extends Controller
                     return response()->json([
                         'message' => 'لایسنس وارد شده فعال است.',
                     ], 200);
-                }
-                else {
+                } else {
                     return response()->json([
                         'message' => 'لایسنس وارد شده غیرفعال است.',
                     ], 200);
-                }                
+                }
             } else {
                 return response()->json([
                     'error' => 'لایسنس وارد شده معتبر نیست.',
