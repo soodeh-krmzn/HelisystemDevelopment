@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('licenses', function (Blueprint $table) {
-            $table->string('detail');
+            $table->string('detail')->after('system_code');
         });
     }
 
