@@ -33,6 +33,7 @@
                                                     <th>مجوز</th>
                                                     <th>کد سیستم</th>
                                                     <th>وضعیت</th>
+                                                    <th>توضیحات</th>
                                                     <th>وضعیت فعال</th>
                                                     <th>کاربر فعال</th>
                                                 </tr>
@@ -51,6 +52,7 @@
                                                                 {{ $license->status ? 'فعال' : 'غیرفعال' }}
                                                             </button>
                                                         </td>
+                                                        <td>{{ $license->detail }}</td>
                                                         <td> <span
                                                                 class="badge bg-{{ $license->isActive == 0 ? 'secondary' : 'success' }}">{{ $license->isActive == 0 ? 'خاموش' : 'در حال استفاده' }}</span>
                                                         </td>
