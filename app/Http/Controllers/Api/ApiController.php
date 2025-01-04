@@ -72,11 +72,13 @@ class ApiController extends Controller
                 'pc_token' => 'required|string|max:255',
                 'system_code' => 'required|string|max:255',
                 'username' => 'required|string|max:255',
+                'detial' => 'required|string|max:255',                
             ]);
 
             $pcToken = $validatedData['pc_token'];
             $systemCode = $validatedData['system_code'];
             $username = $validatedData['username'];
+            $detial = $validatedData['detial'];
 
             $licenseData = [
                 'pc_token' => $pcToken,
@@ -111,6 +113,7 @@ class ApiController extends Controller
                         $license->account_id = $account->id;
                         $license->license = $encryptedLicense;
                         $license->system_code = $systemCode;
+                        $license->detail = $detial;
                         $license->status = 1;
                         $license->save();
 
@@ -1037,7 +1040,7 @@ class ApiController extends Controller
                     ], 404);
                 }
                 $license->is_active = 0;
-                $license->user_active = null;
+                $license->user_active = 0;
                 $license->save();
                 return response()->json([
                     'message' => 'لایسنس غیرفعال شد.',
