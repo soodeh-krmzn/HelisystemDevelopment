@@ -130,7 +130,7 @@ class ApiController extends Controller
             } else {
                 if (!$account) {
                     return response()->json([
-                        'error' => 'کلید وارد شده در لیست مشترکین تعریف یافت نشد .',
+                        'error' => 'کلید وارد شده در لیست مشترکین یافت نشد .',
                     ], 404);
                 }
                 if (!$user) {
