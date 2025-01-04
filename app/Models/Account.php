@@ -19,6 +19,25 @@ class Account extends Model
      *
      * @var array<int, string>
      */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (self::where('pc_token', $model->pc_token)->exists()) {
+                throw new \Exception('مقدار pc_token باید یکتا باشد.');
+            }
+        });
+
+        static::updating(function ($model) {
+            if (self::where('pc_token', $model->pc_token)
+                ->where('id', '!=', $model->id)
+                ->exists()
+            ) {
+                throw new \Exception('مقدار pc_token باید یکتا باشد.');
+            }
+        });
+    }
     protected $guarded = [];
 
     public function users(): HasMany
