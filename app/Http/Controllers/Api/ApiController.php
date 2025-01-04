@@ -72,13 +72,13 @@ class ApiController extends Controller
                 'pc_token' => 'required|string|max:255',
                 'system_code' => 'required|string|max:255',
                 'username' => 'required|string|max:255',
-                'detial' => 'required|string|max:255',                
+                'detail' => 'required|string|max:255',                
             ]);
 
             $pcToken = $validatedData['pc_token'];
             $systemCode = $validatedData['system_code'];
             $username = $validatedData['username'];
-            $detial = $validatedData['detial'];
+            $detail = $validatedData['detail'];
 
             $licenseData = [
                 'pc_token' => $pcToken,
@@ -113,7 +113,7 @@ class ApiController extends Controller
                         $license->account_id = $account->id;
                         $license->license = $encryptedLicense;
                         $license->system_code = $systemCode;
-                        $license->detail = $detial;
+                        $license->detail = $detail;
                         $license->status = 1;
                         $license->save();
 
