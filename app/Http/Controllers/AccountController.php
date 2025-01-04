@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\Rule;
 use PDO;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -84,7 +85,10 @@ class AccountController extends Controller
             'town' => 'required',
             'days' => 'required|integer',
             'sms_charge' => 'nullable|integer',
-            'pc_token' => 'nullable'
+            'pc_token' => [
+                'nullable',
+                Rule::unique('accounts')->ignore($account->id),
+            ],
         ]);
         // dd($request->group_id);
         $account->update([
@@ -162,6 +166,7 @@ class AccountController extends Controller
         Alert::success("موفق", "اشتراک با موفقیت ویرایش شد.");
         return redirect()->route('account.index');
     }
+
     public function privilages()
     {
         return false;
