@@ -97,6 +97,13 @@ class ApiController extends Controller
                     $license = License::where('account_id', $account->id)->first();
 
                     if ($license) {
+                        $licenseData = json_decode(Crypt::decryptString($license->license), true);
+                        if ($licenseData['system_code'] !== $systemCode) {
+                            return response()->json([
+                                'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
+                            ], 403);
+                        }
+
                         if ($license->user_active != $user->id && $license->user_active != 0) {
                             // License is active and used by another user
                             $user_active = User::where('id', $license->user_active)->first();
