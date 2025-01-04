@@ -90,6 +90,9 @@ class ApiController extends Controller
             $encryptedLicense = Crypt::encryptString(json_encode($licenseData));
 
             $account = Account::where('pc_token', $pcToken)->first();
+            return response()->json([
+                'error' => 'check.',
+            ], 404);
             $user = User::where('username', $username)->first();
 
             if ($account && $user) {
