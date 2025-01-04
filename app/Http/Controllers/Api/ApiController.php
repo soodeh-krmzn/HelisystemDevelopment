@@ -93,7 +93,7 @@ class ApiController extends Controller
             
             $user = User::where('username', $username)->first();
             return response()->json([
-                'error' => 'check.',
+                'error' => 'check.'.$user,
             ], 404);
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
