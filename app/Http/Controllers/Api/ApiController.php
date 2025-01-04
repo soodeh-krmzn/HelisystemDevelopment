@@ -132,7 +132,7 @@ class ApiController extends Controller
                     $userAccount= Account::where('id', $user->account_id)->first();
                     if($userAccount->pc_token == null){
                         return response()->json([
-                            'error' => 'کلید عبور برای حساب شما تعریف نشده است، با پشتیبانی تماس بگیرید..',
+                            'error' => 'کلید عبور برای حساب شما تعریف نشده است، با پشتیبانی تماس بگیرید.',
                         ], 404);
                     }
                 }
