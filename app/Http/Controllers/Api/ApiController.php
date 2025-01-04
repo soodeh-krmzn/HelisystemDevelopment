@@ -124,7 +124,7 @@ class ApiController extends Controller
                     }
                 } else {
                     return response()->json([
-                        'error' => 'کلید وارد شده با کاربر درخواستی تطبیق ندارد.',
+                        'error' => 'کلید وارد شده با کاربر درخواستی مطابقت ندارد.',
                     ], 404);
                 }
             } else {
