@@ -128,6 +128,14 @@ class ApiController extends Controller
                     ], 404);
                 }
             } else {
+                if($user){
+                    $userAccount= Account::where('id', $user->account_id)->first();
+                    if($userAccount->pc_token == null){
+                        return response()->json([
+                            'error' => 'کلید عبور برای حساب شما تعریف نشده است، با پشتیبانی تماس بگیرید..',
+                        ], 404);
+                    }
+                }
                 if (!$account) {
                     return response()->json([
                         'error' => 'کلید وارد شده در لیست مشترکین یافت نشد .',
