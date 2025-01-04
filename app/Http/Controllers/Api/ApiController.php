@@ -101,7 +101,7 @@ class ApiController extends Controller
                             // License is active and used by another user
                             $user_active = User::where('id', $license->user_active)->first();
                             return response()->json([
-                                'error' => 'لایسنس توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
+                                'error' => 'مجوز عبور توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
                             ], 404);
                         } else
                             return response()->json([
@@ -124,18 +124,18 @@ class ApiController extends Controller
                     }
                 } else {
                     return response()->json([
-                        'error' => 'شماره تماس با حساب مطابقت ندارد.',
+                        'error' => 'کلید وارد شده با کاربر درخواستی تطبیق ندارد.',
                     ], 404);
                 }
             } else {
                 if (!$account) {
                     return response()->json([
-                        'error' => 'توکن صحیح نیست.',
+                        'error' => 'کلید وارد شده در لیست کابران این اشتراک تعریف نشده است.',
                     ], 404);
                 }
                 if (!$user) {
                     return response()->json([
-                        'error' => 'شماره تماس صحیح نیست.',
+                        'error' => 'نام کاربری وارد شده معتبر نیست.',
                     ], 404);
                 }
             }
@@ -149,7 +149,7 @@ class ApiController extends Controller
     public function verifyLicense(Request $request)
     {
         $validatedData = $request->validate([
-            'pc_token' => 'required|string',
+            'pc_token' => 'nullable|string',
             'licenseKey' => 'required|string',
             'system_code' => 'required|string|max:255',
             'username' => 'required|string',
@@ -163,6 +163,11 @@ class ApiController extends Controller
         $inputPassword = $validatedData['password'];
 
         try {
+            if (!$inputPcToken) {
+                return response()->json([
+                    'error' => 'کاربر یافت نشد.',
+                ], 404);
+            }
             $user = User::where('username', $inputUsername)->first();
             if (!$user) {
                 return response()->json([
