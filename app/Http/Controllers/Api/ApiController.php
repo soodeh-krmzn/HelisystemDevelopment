@@ -89,12 +89,9 @@ class ApiController extends Controller
 
             $encryptedLicense = Crypt::encryptString(json_encode($licenseData));
 
-            $account = Account::where('pc_token', $pcToken)->first();
-            
+            $account = Account::where('pc_token', $pcToken)->first();            
             $user = User::where('username', $username)->first();
-            return response()->json([
-                'error' => 'check.'.$user,
-            ], 404);
+            
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
                     $license = License::where('account_id', $account->id)->first();
@@ -103,6 +100,9 @@ class ApiController extends Controller
                         if ($license->user_active != $user->id) {
                             // License is active and used by another user
                             $user_active = User::where('id', $license->user_active)->first();
+                            return response()->json([
+                                'error' => 'check.'.$user_active,
+                            ], 404);
                             return response()->json([
                                 'error' => 'لایسنس توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
                             ], 404);
