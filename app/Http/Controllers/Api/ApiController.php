@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\License;
 use App\Models\MyModels\Sync;
+use App\Models\Sync\Setting;
 use App\Models\User;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
@@ -131,13 +132,13 @@ class ApiController extends Controller
                     }
                 } else {
                     return response()->json([
-                        'error' => 'کلید وارد شده با کاربر درخواستی مطابقت ندارد.',
+                        'error' => 'کلید وارد شده برای این کاربر معتبر نیست.',
                     ], 404);
                 }
             } else {
-                if($user){
-                    $userAccount= Account::where('id', $user->account_id)->first();
-                    if($userAccount->pc_token == null){
+                if ($user) {
+                    $userAccount = Account::where('id', $user->account_id)->first();
+                    if ($userAccount->pc_token == null) {
                         return response()->json([
                             'error' => 'کلید عبور برای حساب شما تعریف نشده است، با پشتیبانی تماس بگیرید.',
                         ], 404);
@@ -203,6 +204,19 @@ class ApiController extends Controller
             }
             $account = $license->account;
 
+            if ($user->access == 2) {
+                return response()->json([
+                    'error' => __('عدم دسترسی! لطفا با پشتیبانی مجموعه تماس بگیرید.'),
+                ], 403);
+            }
+
+            if ($user->status != 'active') {
+                $desc = $user->description;
+                return response()->json([
+                    'message' => $desc ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." .  PHP_EOL . "علت: " . $desc
+                        : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                ], 403);
+            }
 
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
@@ -246,11 +260,12 @@ class ApiController extends Controller
             if ($account->status != 'active') {
                 $desc = $account->description;
                 return response()->json([
-                    'message' => $desc
+                    'error' => $desc
                         ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." . PHP_EOL . "علت: " . $desc
                         : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
                 ], 403);
             }
+
 
             return response()->json([
                 'user' => $user,
@@ -445,6 +460,9 @@ class ApiController extends Controller
 
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
+        }
+        if (!$account->getDaysLeft() <= 0) {
+            return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 404);
         }
 
         try {
