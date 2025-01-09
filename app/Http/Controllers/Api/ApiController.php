@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Services\Database;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Suport\Facades\Validator;
+use DateTime;
+use Carbon\Carbon;
+
 
 class ApiController extends Controller
 {
@@ -64,6 +67,17 @@ class ApiController extends Controller
                 'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function checkAccountCharge(Account $account)
+    {
+        $expire_charge = new DateTime(Carbon::parse($account->charge_date)->addDays($account->days)->format('Y-m-d'));
+        $today = new DateTime();
+        $diff = $today->diff($expire_charge, $absolute = false)->format('%R%a');
+        if ($diff <= 0)
+            return false;
+        else
+            return true;
     }
 
     public function pcCodeKey(Request $request)
@@ -461,19 +475,21 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        if ($account->getDaysLeft() <= 0) {
-            return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 403);
+
+        if (!$this->checkAccountCharge($account)) {
+            return response()->json([
+                'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
+            ], 403);
         }
-        return response()->json(['error' => $account->daysLeft()], 403);
-        
-        // try {
-        //     $this->account($account);
-        //     $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
-        //     $data = DB::connection('useraccount')->select($query);
-        //     return response()->json($data);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
-        // }
+
+        try {
+            $this->account($account);
+            $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
+            $data = DB::connection('useraccount')->select($query);
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
+        }
     }
 
     public function dataRecordCollect(Request $request)
