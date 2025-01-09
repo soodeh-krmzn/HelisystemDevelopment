@@ -462,17 +462,17 @@ class ApiController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
         if ($account->getDaysLeft() <= 0) {
-            return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 404);
+            return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 403);
         }
-
-        try {
-            $this->account($account);
-            $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
-            $data = DB::connection('useraccount')->select($query);
-            return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
-        }
+        return response()->json(['error' => $account->getDaysLeft()], 403);
+        // try {
+        //     $this->account($account);
+        //     $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
+        //     $data = DB::connection('useraccount')->select($query);
+        //     return response()->json($data);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
+        // }
     }
 
     public function dataRecordCollect(Request $request)
