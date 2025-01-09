@@ -464,7 +464,7 @@ class ApiController extends Controller
         if ($account->getDaysLeft() <= 0) {
             return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 403);
         }
-        return response()->json(['error' => $account->getDaysLeft()], 403);
+        return response()->json(['error' => $account->daysLeft()], 403);
         // try {
         //     $this->account($account);
         //     $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
