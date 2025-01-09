@@ -461,7 +461,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-        if (!$account->getDaysLeft() <= 0) {
+        if ($account->getDaysLeft() <= 0) {
             return response()->json(['error' => 'کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'], 404);
         }
 
