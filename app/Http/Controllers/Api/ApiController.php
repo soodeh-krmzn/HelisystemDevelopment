@@ -299,7 +299,7 @@ class ApiController extends Controller
             $validatedData = $request->validate([
                 'license' => 'required|string',
                 'systemCode' => 'required|string',
-                'account_Id' => 'required',
+                'accountId' => 'required',
                 'username' => 'required'
             ]);
 
