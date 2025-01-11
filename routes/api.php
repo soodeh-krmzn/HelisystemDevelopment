@@ -32,7 +32,7 @@ Route::post('/user-db', [ApiController::class, 'connectdb']);
 Route::post('/data-collect', [ApiController::class, 'collectData']);
 Route::post('/data-collect-admin', [ApiController::class, 'collectAdminData']);
 Route::post('/check-pcCode-key', [ApiController::class, 'pcCodeKey']);
-Route::post('/check-license-key', [ApiController::class, 'verifyLicense']);
+Route::post('/check-license-key', [ApiController::class, 'loginCheck']);
 Route::post('/data-sync', [ApiController::class, 'syncDataTable']);
 Route::post('/data-record-collect', [ApiController::class, 'dataRecordCollect']);
 Route::post('/sync/store', [ApiController::class, 'storeSyncData']);

@@ -176,7 +176,7 @@ class ApiController extends Controller
         }
     }
 
-    public function verifyLicense(Request $request)
+    public function loginCheck(Request $request)
     {
         $validatedData = $request->validate([
             'pc_token' => 'nullable|string',
@@ -292,25 +292,86 @@ class ApiController extends Controller
         }
     }
 
-    public function checkUserKey(Request $request)
+    public function checkRequest(Request $request)
     {
+
         try {
             $validatedData = $request->validate([
-                'user_key' => 'required|string|max:255',
+                'license' => 'required|string|max:255',
+                'systemCode' => 'required|string|max:255',
+                'account_Id' => 'required',
+                'username' => 'required'
             ]);
 
-            $user = User::where('user_key', $validatedData['user_key'])->first();
-            // $account = Account::where('account_id' , $user->id)->select();
-            if ($user) {
+            $user = User::where('username', $validatedData['username'])->first();
+            $account = Account::findOrFail($validatedData['account_Id']);
+            $license = License::where('license', $validatedData['license']);
+
+            if (!$user) {
                 return response()->json([
-                    'user' => $user,
-                    // 'account' =>$account,
-                ], 200);
+                    'error' => 'کاربر یافت نشد.',
+                ], 404);
+            }
+            if (!$license) {
+                return response()->json([
+                    'error' => 'لایسنس معتبر نیست.',
+                ], 404);
+            }
+
+            $licenseAccount = $license->account;
+            if ($licenseAccount->id == $account->id) {
+                return response()->json([
+                    'error' => 'حساب کاربری مطابق با مجوز عبور نیست.',
+                ], 404);
+            }
+
+            if ($licenseAccount && $user) {
+                if ($user->account_id === $licenseAccount->id) {
+                    if ($license->user_active != $user->id) {
+                        // License is active and used by another user
+                        $user_active = User::where('id', $license->user_active)->first();
+                        return response()->json([
+                            'error' => 'لایسنس توسط کاربر ' . $user_active->username . ' در حال استفاده است.',
+                        ], 404);
+                    }
+                } else {
+                    return response()->json([
+                        'error' => 'مجوز عبور شما مطابق با حساب شما نیست.',
+                    ], 404);
+                }
             } else {
+                if (!$account) {
+                    return response()->json([
+                        'error' => 'لایسنس صحیح نیست.',
+                    ], 404);
+                }
+                if (!$user) {
+                    return response()->json([
+                        'error' => 'کاربری با این مشخصات یافت نشد.',
+                    ], 404);
+                }
+            }
+
+            $licenseData = json_decode(Crypt::decryptString($license), true);
+            if ($licenseData['system_code'] !== $validatedData['systemCode']) {
                 return response()->json([
-                    'error' => 'کد وارد شده معتبر نیست.'
+                    'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
                 ], 403);
             }
+
+            if ($account->status != 'active') {
+                $desc = $account->description;
+                return response()->json([
+                    'error' => $desc
+                        ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." . PHP_EOL . "علت: " . $desc
+                        : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                ], 403);
+            }
+
+            return response()->json([
+                'user' => $user,
+                'license' => $license->license,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
@@ -469,26 +530,36 @@ class ApiController extends Controller
     public function syncDataTable(Request $request)
     {
         $tableName = 'sync';
-        $accountId = $request['accountId'];
-        $account = Account::findOrFail($accountId);
+        $accountId = $request->input('accountId');
 
+        // بررسی موجودیت حساب کاربری
+        $account = Account::find($accountId);
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
+        // بررسی شارژ حساب
         if (!$this->checkAccountCharge($account)) {
             return response()->json([
                 'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
             ], 403);
         }
 
+        $checkResponse = $this->checkRequest($request);
+
+        if ($checkResponse->getStatusCode() !== 200) {
+            return $checkResponse;
+        }
+
         try {
             $this->account($account);
+
             $query = "SELECT * FROM {$tableName} WHERE status = 0 ";
             $data = DB::connection('useraccount')->select($query);
-            return response()->json($data);
+
+            return response()->json($data, 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Database connection failed from connection: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
         }
     }
 
