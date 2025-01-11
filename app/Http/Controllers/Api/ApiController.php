@@ -297,7 +297,7 @@ class ApiController extends Controller
 
         try {
             $validatedData = $request->validate([
-                'license' => 'required|string|max:255',
+                'license' => 'required|string',
                 'systemCode' => 'required|string',
                 'account_Id' => 'required',
                 'username' => 'required'
