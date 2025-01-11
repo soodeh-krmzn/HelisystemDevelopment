@@ -319,6 +319,9 @@ class ApiController extends Controller
             }
 
             $licenseAccount = $license->account;
+            return response()->json([
+                'error' => $licenseAccount,
+            ], 404);
             if ($licenseAccount->id == $account->id) {
                 return response()->json([
                     'error' => 'حساب کاربری مطابق با مجوز عبور نیست.',
