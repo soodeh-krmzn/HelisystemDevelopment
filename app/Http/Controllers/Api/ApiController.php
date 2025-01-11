@@ -305,7 +305,7 @@ class ApiController extends Controller
 
             $user = User::where('username', $validatedData['username'])->first();
             $account = Account::findOrFail($validatedData['accountId']);
-            $license = License::where('license', $validatedData['license']);
+            $license = License::where('license', $validatedData['license'])->first();
 
             if (!$user) {
                 return response()->json([
@@ -319,9 +319,6 @@ class ApiController extends Controller
             }
 
             $licenseAccount = $license->account;
-            return response()->json([
-                'error' => $licenseAccount,
-            ], 404);
             if ($licenseAccount->id == $account->id) {
                 return response()->json([
                     'error' => 'حساب کاربری مطابق با مجوز عبور نیست.',
