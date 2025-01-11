@@ -304,7 +304,7 @@ class ApiController extends Controller
             ]);
 
             $user = User::where('username', $validatedData['username'])->first();
-            $account = Account::findOrFail($validatedData['account_Id']);
+            $account = Account::findOrFail($validatedData['accountId']);
             $license = License::where('license', $validatedData['license']);
 
             if (!$user) {
