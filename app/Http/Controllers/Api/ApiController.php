@@ -352,7 +352,7 @@ class ApiController extends Controller
                 }
             }
 
-            $licenseData = json_decode(Crypt::decryptString($license), true);
+            $licenseData = json_decode(Crypt::decryptString($validatedData['license']), true);
             if ($licenseData['system_code'] !== $validatedData['systemCode']) {
                 return response()->json([
                     'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
@@ -371,7 +371,7 @@ class ApiController extends Controller
             return response()->json( 200);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => '.خطایی رخ داده است: ' . $e->getMessage(),
+                'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
             ], 500);
         }
     }
