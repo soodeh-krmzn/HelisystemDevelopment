@@ -368,13 +368,10 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            return response()->json([
-                'user' => $user,
-                'license' => $license->license,
-            ], 200);
+            return response()->json( 200);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'خطایی رخ داده است: ' . $e->getMessage(),
+                'error' => '.خطایی رخ داده است: ' . $e->getMessage(),
             ], 500);
         }
     }
