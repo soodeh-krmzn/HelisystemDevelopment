@@ -27,8 +27,8 @@ use App\Models\ChangeLog;
 // Auth
 Route::get('login', [AdminController::class, 'login'])->name('login');
 Route::post('login', [AdminController::class, 'loginStore'])->name('login.store');
-// Route::get('register', [AdminController::class, 'register'])->name('register');
-// Route::post('register', [AdminController::class, 'registerStore'])->name('register.store');
+Route::get('register', [AdminController::class, 'register'])->name('register');
+Route::post('register', [AdminController::class, 'registerStore'])->name('register.store');
 Route::post('logout', [AdminController::class, 'logout'])->name('logout');
 
 // Payment
