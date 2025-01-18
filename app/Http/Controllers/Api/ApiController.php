@@ -579,29 +579,6 @@ class ApiController extends Controller
         }
     }
 
-    // public function fetchUnsyncedRecords()
-    // {
-    //     return Sync::where('status', 0)->with(['model'])->get();
-    // }
-
-    // public function markAsSynced(Request $request)
-    // {
-    //     Sync::where('uuid', $request->uuid)->update(['status' => 1]);
-    // }
-
-    // public function storeRecord(Request $request)
-    // {
-    //     $syncService = new SyncService();
-    //     $syncService->storeRecordLocally(
-    //         $request->model_name,
-    //         $request->uuid,
-    //         $request->data,
-    //         $request->relationships
-    //     );
-    //     Sync::updateOrCreate(['uuid' => $request->uuid], ['status' => 1]);
-    // }
-
-
     //SYNC FROM OFFLINE TO ONLINE
     public function getTableNameFromModel($model)
     {
@@ -633,7 +610,7 @@ class ApiController extends Controller
         if ($checkResponse->getStatusCode() !== 200) {
             return $checkResponse;
         }
-        
+
         $this->account($account);
         try {
 
