@@ -412,6 +412,7 @@ class ApiController extends Controller
             ]) : [],
         ]);
     }
+
     public function connectdb(Request $request)
     {
         $userId = $request['userId'];
@@ -451,51 +452,6 @@ class ApiController extends Controller
         }
     }
 
-    // public function collectAdminData(Request $request)
-    // {
-    //     $tableName = $request['tableName'];
-    //     $offset = (int)$request['offset'];
-    //     $ppp = (int)$request['ppp'];
-    //     $accountId = $request['accountId'];
-    //     $account = Account::findOrFail($accountId);
-
-    //     if (!$account) {
-    //         return response()->json(['error' => 'Account not found'], 404);
-    //     }
-
-    //     DB::purge('mysql');
-    //     Config::set('database.connections.mysql', [
-    //         'driver' => 'mysql',
-    //         'host' => 'localhost',
-    //         'database' => 'helisystem.db',
-    //         'username' => 'Heli_dbUser',
-    //         'password' => 'by(tUETH@by(tUETH@',
-    //         'charset' => 'utf8mb4',
-    //         'collation' => 'utf8mb4_unicode_ci',
-    //         'prefix' => '',
-    //         'prefix_indexes' => true,
-    //         'strict' => false,
-    //         'engine' => null,
-    //         'options' => extension_loaded('pdo_mysql') ? array_filter([
-    //             PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-    //         ]) : [],
-    //     ]);
-
-    //     try {
-    //         if ($tableName == 'users') {
-    //             $query = "SELECT * FROM {$tableName} WHERE account_id = ? LIMIT ? OFFSET ?";
-    //             $data = DB::connection('mysql')->select($query, [$accountId, $ppp, $offset]);
-    //         } else {
-    //             $query = "SELECT * FROM {$tableName} LIMIT ? OFFSET ?";
-    //             $data = DB::connection('mysql')->select($query, [$ppp, $offset]);
-    //         }
-    //         return response()->json($data);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
-    //     }
-    // }
-
-
     public function collectAdminData(Request $request)
     {
         $tableName = $request->input('tableName');
@@ -529,13 +485,11 @@ class ApiController extends Controller
         $tableName = 'sync';
         $accountId = $request->input('accountId');
 
-        // بررسی موجودیت حساب کاربری
         $account = Account::find($accountId);
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        // بررسی شارژ حساب
         if (!$this->checkAccountCharge($account)) {
             return response()->json([
                 'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
@@ -667,6 +621,19 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
+       
+        if (!$this->checkAccountCharge($account)) {
+            return response()->json([
+                'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
+            ], 403);
+        }
+
+        $checkResponse = $this->checkRequest($request);
+
+        if ($checkResponse->getStatusCode() !== 200) {
+            return $checkResponse;
+        }
+        
         $this->account($account);
         try {
 
