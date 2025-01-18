@@ -738,6 +738,10 @@ class ApiController extends Controller
                         $existingRecord = $this->syncPersonMeta($existingRecord, $request);
                         unset($data['person_id']);
                         break;
+
+                    case 'App\\Models\\Sync\\Offer':
+                        $existingRecord = $this->syncOffer($existingRecord, $id);
+                        break;
                 }
 
                 $existingRecord->timestamps = false;
@@ -775,6 +779,9 @@ class ApiController extends Controller
                         break;
                     case 'App\\Models\\Sync\\PersonMeta':
                         $newRecord = $this->syncPersonMeta($newRecord, $request);
+                        break;
+                    case 'App\\Models\\Sync\\Offer':
+                        $newRecord = $this->syncOffer($newRecord, $request);
                         break;
                 }
 
@@ -1089,6 +1096,22 @@ class ApiController extends Controller
         return $record;
     }
 
+    public function syncOffer($offerData, $id)
+    {
+        $offerModel = "App\\Models\\Sync\\Offer";
+
+        if (!class_exists($offerModel)) {
+            throw new \Exception("Game model not found");
+        }
+
+        $offerInstance = $offerModel::find($id);
+
+        if (!$offerInstance) {
+            $offerInstance = $offerModel::create($offerData);
+        }
+
+        return $offerInstance;
+    }
     public function checkLicenseActivaation(Request $request)
     {
         $validatedData = $request->validate([
@@ -1132,6 +1155,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
+
     public function deactiveLicense(Request $request)
     {
         $validatedData = $request->validate([
@@ -1177,144 +1201,4 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    // public function storeSyncData(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'model_name' => 'required|string',
-    //         'id' => 'required|integer',
-    //         'data' => 'required|array',
-    //         // 'accountId' => 'required|integer',
-    //     ]);
-
-    //     // Fetch account details
-    //     $accountId = 3;
-    //     $account = Account::find($accountId);
-
-    //     if (!$account) {
-    //         return response()->json(['error' => 'Account not found'], 404);
-    //     }
-
-    //     DB::purge('useraccount');
-    //     Config::set('database.connections.useraccount', [
-    //         'driver' => 'mysql',
-    //         'host' => 'localhost',
-    //         'database' => '3db',
-    //         'username' => '3user',
-    //         'password' => 'jVHRfOQnDQ3v',
-    //         'charset' => 'utf8mb4',
-    //         'collation' => 'utf8mb4_unicode_ci',
-    //         'prefix' => '',
-    //         'strict' => false,
-    //         'engine' => null,
-    //         'options' => extension_loaded('pdo_mysql') ? array_filter([
-    //             PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-    //         ]) : [],
-    //     ]);
-
-    //     try {
-
-
-    //         try {
-    //             $model = $this->getTableNameFromModel($request['model_name']);
-    //             $modelClass = $request['model_name'];
-    //             $id = $request['id'];
-    //             $data = $request['data'];
-
-    //             $existingRecord = ($model === 'Person')
-    //                 ? $modelClass::withTrashed()->where('uuid', $id)->first()
-    //                 : $modelClass::withTrashed()->find($id);
-
-    //             $createdAt = $data['created_at'] ?? null;
-    //             $updatedAt = $data['updated_at'] ?? null;
-    //             $modelClass::withoutSyncing(function () use ($existingRecord, $modelClass, $data, $createdAt, $updatedAt) {
-    //                 if ($existingRecord) {
-    //                     $existingRecord->timestamps = false;
-    //                     unset($data['id']);
-
-    //                     $existingRecord->fill($data);
-    //                     if ($createdAt) $existingRecord->created_at = $createdAt;
-    //                     if ($updatedAt) $existingRecord->updated_at = $updatedAt;
-    //                     $existingRecord->save();
-    //                 } else {
-    //                     $newRecord = new $modelClass($data);
-    //                     $newRecord->timestamps = false;
-
-    //                     if ($createdAt) $newRecord->created_at = $createdAt;
-    //                     if ($updatedAt) $newRecord->updated_at = $updatedAt;
-
-    //                     $newRecord->save();
-    //                 }
-    //             });
-    //         } catch (Exception $e) {
-    //             return response()->json(['error' => 'Failed to store record: ' . $e->getMessage()], 500);
-    //         }
-
-
-
-
-
-    //         // Find or insert the data into the specific table in the account's database
-    //         $modelClass = $validated['model_name'];
-
-    //         if (!class_exists($modelClass)) {
-    //             return response()->json(['error' => 'Invalid model name'], 400);
-    //         }
-
-    //         // Use the `useraccount` connection for this model
-    //         $modelInstance = (new $modelClass)->setConnection('useraccount');
-
-    //         $existingRecord = $modelInstance->find($validated['id']);
-
-    //         if ($existingRecord) {
-    //             // Update the existing record
-    //             $existingRecord->update($validated['data']);
-    //         } else {
-    //             // Insert a new record
-    //             $modelInstance->create(array_merge($validated['data'], ['id' => $validated['id']]));
-    //         }
-
-    //         return response()->json(['message' => 'Record synced successfully'], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
-    //     }
-    // }
-
-
-
-    // public function storeSyncData(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'model_name' => 'required|string',
-    //         'm_uuid' => 'nullable|string',
-    //         'data' => 'required|array',
-    //         'id' => 'required|integer',
-    //     ]);
-
-    //     try {
-    //         $modelClass = $validated['model_name']; // Example: App\Models\YourModel
-    //         if (!class_exists($modelClass)) {
-    //             return response()->json(['error' => 'Invalid model name'], 400);
-    //         }
-
-    //         $data = $validated['data'];
-    //         $id = $validated['id'];
-    //         $uuid = $validated['m_uuid'] ?? null;
-
-    //         // Fetch the existing record using 'id'.
-    //         $existingRecord = $modelClass::find($id);
-
-    //         if ($existingRecord) {
-    //             // Update the existing record.
-    //             $existingRecord->update($data);
-    //         } else {
-    //             // Create a new record and ensure the 'id' is set explicitly.
-    //             $modelClass::create(array_merge($data, ['id' => $id]));
-    //         }
-
-    //         return response()->json(['message' => 'Record synced successfully'], 200);
-    //     } catch (\Exception $e) {
-    //         Log::error('Error syncing data: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Failed to sync data'], 500);
-    //     }
-    // }
 }
