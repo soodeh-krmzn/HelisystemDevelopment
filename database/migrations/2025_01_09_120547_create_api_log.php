@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('endpoint');
             $table->string('method');
-            $table->unsignedBigInteger('account_id');
+            $table->unsignedBigInteger('account_id')->nullable();
             $table->string('user_name')->nullable();
             $table->json('request_data')->nullable();
             $table->json('response_data')->nullable();

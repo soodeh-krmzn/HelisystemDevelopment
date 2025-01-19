@@ -21,7 +21,7 @@ class ApiLogMiddleware
 
         if (!ApiLog::where('endpoint', $request->path())
             ->where('method', $request->method())
-            ->where('created_at', '>=', now()->subSeconds(1)) // جلوگیری از لاگ مشابه در یک ثانیه
+            ->where('created_at', '>=', now()->subSeconds(1))
             ->exists()) {
             ApiLog::create([
                 'endpoint' => $request->path(),
