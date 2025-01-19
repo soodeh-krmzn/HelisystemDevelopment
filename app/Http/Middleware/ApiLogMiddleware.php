@@ -19,10 +19,9 @@ class ApiLogMiddleware
     {
         $response = $next($request);
 
-        if (!ApiLog::withoutTrashed()
-            ->where('endpoint', $request->path())
+        if (!ApiLog::where('endpoint', $request->path())
             ->where('method', $request->method())
-            ->where('created_at', '>=', now()->subSeconds(1))
+            ->where('created_at', '>=', now()->subSeconds(1)) // جلوگیری از لاگ مشابه در یک ثانیه
             ->exists()) {
             ApiLog::create([
                 'endpoint' => $request->path(),
@@ -37,7 +36,6 @@ class ApiLogMiddleware
                 'updated_at' => now(),
             ]);
         }
-
 
 
         return $response;
