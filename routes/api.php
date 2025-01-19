@@ -23,22 +23,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/get-data', [ApiController::class, 'getData']);
+Route::middleware('ApiLogMiddleware')->group(function () {
+    Route::post('/get-data', [ApiController::class, 'getData']);
 
-Route::post('/checkCode', [ApiController::class, 'checkCode']);
+    Route::post('/checkCode', [ApiController::class, 'checkCode']);
+    
+    Route::post('/check-user-key', [ApiController::class, 'checkUserKey']);
+    Route::post('/user-db', [ApiController::class, 'connectdb']);
+    Route::post('/data-collect', [ApiController::class, 'collectData']);
+    Route::post('/data-collect-admin', [ApiController::class, 'collectAdminData']);
+    Route::post('/check-pcCode-key', [ApiController::class, 'pcCodeKey']);
+    Route::post('/check-license-key', [ApiController::class, 'loginCheck']);
+    Route::post('/data-sync', [ApiController::class, 'syncDataTable']);
+    Route::post('/data-record-collect', [ApiController::class, 'dataRecordCollect']);
+    Route::post('/sync/store', [ApiController::class, 'storeSyncData']);
+    Route::post('/update-sync-status', [ApiController::class, 'updateStatus']);
+    Route::post('/deactive-license', [ApiController::class, 'deactiveLicense']);
+    Route::post('/check-license-activation', [ApiController::class, 'checkLicenseActivaation']);
+});
 
-Route::post('/check-user-key', [ApiController::class, 'checkUserKey']);
-Route::post('/user-db', [ApiController::class, 'connectdb']);
-Route::post('/data-collect', [ApiController::class, 'collectData']);
-Route::post('/data-collect-admin', [ApiController::class, 'collectAdminData']);
-Route::post('/check-pcCode-key', [ApiController::class, 'pcCodeKey']);
-Route::post('/check-license-key', [ApiController::class, 'loginCheck']);
-Route::post('/data-sync', [ApiController::class, 'syncDataTable']);
-Route::post('/data-record-collect', [ApiController::class, 'dataRecordCollect']);
-Route::post('/sync/store', [ApiController::class, 'storeSyncData']);
-Route::post('/update-sync-status', [ApiController::class, 'updateStatus']);
-Route::post('/deactive-license', [ApiController::class, 'deactiveLicense']);
-Route::post('/check-license-activation', [ApiController::class, 'checkLicenseActivaation']);
 
 
 // //User
