@@ -19,14 +19,11 @@ class ApiLogMiddleware
     {
         $response = $next($request);
 
-        $accountId = $request->attributes->get('account_id');
-        $username = $request->attributes->get('username');
-
         ApiLog::create([
             'endpoint' => $request->path(),
             'method' => $request->method(),
-            'account_id' => $accountId,
-            'user_name' => $username,
+            'account_id' => $request->attributes->get('account_id'),
+            'user_name' => $request->attributes->get('username'),
             'request_data' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
             'response_data' => json_encode(json_decode($response->getContent(), true), JSON_UNESCAPED_UNICODE),
             'status_code' => $response->getStatusCode(),
@@ -37,6 +34,7 @@ class ApiLogMiddleware
 
         return $response;
     }
+
 
 
     private function prepareData($data)
