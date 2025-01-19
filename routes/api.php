@@ -24,12 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['SetUser', 'ApiLogMiddleware'])->group(function () {
-    Route::post('/get-data', [ApiController::class, 'getData']);
-
-    Route::post('/checkCode', [ApiController::class, 'checkCode']);
-
-    Route::post('/check-user-key', [ApiController::class, 'checkUserKey']);
-    Route::post('/user-db', [ApiController::class, 'connectdb']);
     Route::post('/data-collect', [ApiController::class, 'collectData']);
     Route::post('/data-collect-admin', [ApiController::class, 'collectAdminData']);
     Route::post('/check-pcCode-key', [ApiController::class, 'pcCodeKey']);
@@ -42,6 +36,10 @@ Route::middleware(['SetUser', 'ApiLogMiddleware'])->group(function () {
     Route::post('/check-license-activation', [ApiController::class, 'checkLicenseActivaation']);
 });
 
+Route::post('/get-data', [ApiController::class, 'getData']);
+Route::post('/checkCode', [ApiController::class, 'checkCode']);
+Route::post('/check-user-key', [ApiController::class, 'checkUserKey']);
+Route::post('/user-db', [ApiController::class, 'connectdb']);
 
 
 // //User

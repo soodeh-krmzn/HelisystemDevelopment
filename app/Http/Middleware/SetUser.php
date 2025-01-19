@@ -19,7 +19,6 @@ class SetUser
     public function handle(Request $request, Closure $next)
     {
         $username = $request->input('username');
-        $licenseKey = $request->input('licenseKey');
 
         $user = User::where('username', $username)->first();
         $accountId = $user?->account_id;
