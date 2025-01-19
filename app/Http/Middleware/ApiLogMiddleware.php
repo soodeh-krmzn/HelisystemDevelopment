@@ -19,32 +19,34 @@ class ApiLogMiddleware
     {
         $response = $next($request);
 
-        $logData = [
+        $accountId = $request->attributes->get('account_id');
+        $username = $request->attributes->get('username');
+
+        ApiLog::create([
             'endpoint' => $request->path(),
             'method' => $request->method(),
-            'account_id' => $request->user()->account_id ?? null,
-            'user_name' => $request->user()->username ?? null,
-            'request_data' => $this->prepareData($request->all()), 
-            'response_data' => $this->prepareData(json_decode($response->getContent(), true)),
+            'account_id' => $accountId,
+            'user_name' => $username,
+            'request_data' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
+            'response_data' => json_encode(json_decode($response->getContent(), true), JSON_UNESCAPED_UNICODE),
             'status_code' => $response->getStatusCode(),
             'ip_address' => $request->ip(),
             'created_at' => now(),
             'updated_at' => now(),
-        ];
-
-        ApiLog::create($logData);
+        ]);
 
         return $response;
     }
 
+
     private function prepareData($data)
     {
         if (is_array($data)) {
-            return json_encode($data); 
+            return json_encode($data);
         }
 
         if (is_string($data)) {
-            return $data; 
+            return $data;
         }
 
         return json_encode((array) $data);

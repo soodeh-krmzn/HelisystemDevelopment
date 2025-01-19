@@ -23,11 +23,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('ApiLogMiddleware')->group(function () {
+Route::middleware(['SetUser', 'ApiLogMiddleware'])->group(function () {
     Route::post('/get-data', [ApiController::class, 'getData']);
 
     Route::post('/checkCode', [ApiController::class, 'checkCode']);
-    
+
     Route::post('/check-user-key', [ApiController::class, 'checkUserKey']);
     Route::post('/user-db', [ApiController::class, 'connectdb']);
     Route::post('/data-collect', [ApiController::class, 'collectData']);
