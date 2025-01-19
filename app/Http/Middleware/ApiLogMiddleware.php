@@ -24,8 +24,8 @@ class ApiLogMiddleware
             'method' => $request->method(),
             'account_id' => $request->user()->account_id ?? null,
             'user_name' => $request->user()->username ?? null,
-            'request_data' => $request->all(),
-            'response_data' => json_decode($response->getContent(), true),
+            'request_data' => $this->prepareData($request->all()), 
+            'response_data' => $this->prepareData(json_decode($response->getContent(), true)),
             'status_code' => $response->getStatusCode(),
             'ip_address' => $request->ip(),
             'created_at' => now(),
@@ -36,5 +36,17 @@ class ApiLogMiddleware
 
         return $response;
     }
-}
 
+    private function prepareData($data)
+    {
+        if (is_array($data)) {
+            return json_encode($data); 
+        }
+
+        if (is_string($data)) {
+            return $data; 
+        }
+
+        return json_encode((array) $data);
+    }
+}
