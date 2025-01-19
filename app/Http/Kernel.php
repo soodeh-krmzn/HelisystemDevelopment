@@ -22,9 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SetLocale::class,
-        'api' => [
-            \App\Http\Middleware\ApiLogMiddleware::class,
-        ],
+        \App\Http\Middleware\ApiLogMiddleware::class,
     ];
 
     /**
@@ -68,5 +66,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'ApiLogMiddleware' => \App\Http\Middleware\ApiLogMiddleware::class,
     ];
 }
