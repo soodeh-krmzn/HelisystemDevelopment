@@ -118,6 +118,21 @@ class ApiController extends Controller
                                 'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
                             ], 403);
                         }
+                        if ($user->status != 'active') {
+                            $desc = $user->description;
+                            return response()->json([
+                                'error' => $desc ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." .  PHP_EOL . "علت: " . $desc
+                                    : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                            ], 403);
+                        }
+                        $account = $user->account;
+                        if ($account->status != 'active') {
+                            $desc = $account->status_detail;
+                            return response()->json([
+                                'error' => $desc ? "اشتراک شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." .  PHP_EOL . "علت: " . $desc
+                                    : "اشتراک شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                            ], 403);
+                        }
 
                         if ($license->user_active != $user->id && $license->user_active != 0) {
                             // License is active and used by another user
