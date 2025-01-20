@@ -686,6 +686,10 @@ class ApiController extends Controller
                     case 'App\\Models\\Sync\\Offer':
                         $existingRecord = $this->syncOffer($existingRecord, $id);
                         break;
+
+                    case 'App\\Models\\Sync\\Product':
+                        $existingRecord = $this->syncProduct($existingRecord, $id);
+                        break;
                 }
 
                 $existingRecord->timestamps = false;
@@ -720,11 +724,17 @@ class ApiController extends Controller
                     case 'App\\Models\\Sync\\Payment':
                         $newRecord = $this->syncPayment($newRecord, $request);
                         break;
+
                     case 'App\\Models\\Sync\\PersonMeta':
                         $newRecord = $this->syncPersonMeta($newRecord, $request);
                         break;
+
                     case 'App\\Models\\Sync\\Offer':
                         $newRecord = $this->syncOffer($newRecord, $request);
+                        break;
+
+                    case 'App\\Models\\Sync\\Product':
+                        $newRecord = $this->syncProduct($newRecord, $request);
                         break;
                 }
 
@@ -1045,7 +1055,7 @@ class ApiController extends Controller
         $offerModel = "App\\Models\\Sync\\Offer";
 
         if (!class_exists($offerModel)) {
-            throw new \Exception("Game model not found");
+            throw new \Exception("Offer model not found");
         }
 
         $offerInstance = $offerModel::find($id);
@@ -1056,6 +1066,24 @@ class ApiController extends Controller
 
         return $offerInstance;
     }
+
+    public function syncProduct($productData, $id)
+    {
+        $productModel = "App\\Models\\Sync\\Product";
+
+        if (!class_exists($productModel)) {
+            throw new \Exception("Product model not found");
+        }
+
+        $productInstance = $productModel::find($id);
+
+        if (!$productInstance) {
+            $productInstance = $productModel::create($productData);
+        }
+
+        return $productInstance;
+    }
+
     public function checkLicenseActivaation(Request $request)
     {
         $validatedData = $request->validate([
