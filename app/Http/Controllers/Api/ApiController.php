@@ -598,7 +598,7 @@ class ApiController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-       
+
         if (!$this->checkAccountCharge($account)) {
             return response()->json([
                 'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
@@ -707,7 +707,6 @@ class ApiController extends Controller
 
                     case 'App\\Models\\Sync\\FactorBody':
                         $newRecord = $this->syncFactorBody($newRecord, $request);
-                        unset($data['product_id']);
                         break;
 
                     case 'App\\Models\\Sync\\Game':
@@ -927,7 +926,7 @@ class ApiController extends Controller
             $productData = $request['includes']['Product'];
             $productModel = "App\\Models\\Sync\\Product";
 
-            $productInstance = $productModel::on('useraccount')->where('id', $productData['id'])->first();
+            $productInstance = $productModel::on('useraccount')->where('uuid', $productData['uuid'])->first();
             if ($productInstance) {
                 $productInstance->timestamps = false;
                 $productInstance->fill($productData);
@@ -967,6 +966,7 @@ class ApiController extends Controller
             // }
             if ($factorInstance) {
                 $factorBodyData['factor_id'] = $factorInstance->id;
+                $record->factor_id = $factorInstance->id;
             } else {
                 // Log or ignore if Factor doesn't exist
                 Log::warning("Factor not found: " . $factorData['uuid']);
