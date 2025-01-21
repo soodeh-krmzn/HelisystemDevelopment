@@ -103,7 +103,7 @@ class ApiController extends Controller
 
             if ($tableCount === 0) {
                 return response()->json([
-                    'error' => 'راه اندازی نرم افزار آنلاین انجام نشده است، از طریق سایت اقدام کنید'
+                    'error' => 'راه اندازی نرم افزار آنلاین انجام نشده است، از طریق سایت اقدام کنید.'
                 ], 403);
             }
 
