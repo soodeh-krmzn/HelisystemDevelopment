@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\License;
-use App\Models\MyModels\Sync;
 use App\Models\Sync\Setting;
 use App\Models\User;
 use Illuminate\Encryption\Encrypter;
@@ -18,7 +17,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Services\Database;
-use Illuminate\Suport\Facades\Validator;
 use DateTime;
 use Carbon\Carbon;
 
@@ -78,6 +76,41 @@ class ApiController extends Controller
             return false;
         else
             return true;
+    }
+
+    public function checkSetupIsDone(Request $request)
+    {
+        $checkResponse = $this->checkRequest($request);
+
+        if ($checkResponse->getStatusCode() !== 200) {
+            return $checkResponse;
+        }
+
+        $account = Account::findOrFail($request['accountId']);
+
+        if (!$account) {
+            return response()->json(['error' => 'Account not found'], 404);
+        }
+        $this->account($account);
+        try {
+            $databaseName = DB::connection('useraccount')->getDatabaseName();
+
+            $tableCount = DB::connection('useraccount')->selectOne("
+                SELECT COUNT(*) AS table_count
+                FROM information_schema.tables
+                WHERE table_schema = ?
+            ", [$databaseName])->table_count;
+
+            if ($tableCount === 0) {
+                return response()->json([
+                    'error' => 'راه اندازی نرم افزار آنلاین انجام نشده است، از طریق سایت اقدام کنید'
+                ], 403);
+            }
+
+            return response()->json(['success' => 'Setup is complete']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
+        }
     }
 
     public function pcCodeKey(Request $request)
@@ -239,16 +272,25 @@ class ApiController extends Controller
                 ], 403);
             }
 
-            if ($user->status != 'active') {
-                $desc = $user->description;
-                return response()->json([
-                    'message' => $desc ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." .  PHP_EOL . "علت: " . $desc
-                        : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
-                ], 403);
-            }
-
             if ($account && $user) {
                 if ($user->account_id === $account->id) {
+                    if ($user->status != 'active') {
+                        $desc = $user->description;
+                        return response()->json([
+                            'error' => $desc ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." .  PHP_EOL . "علت: " . $desc
+                                : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                        ], 403);
+                    }
+
+                    if ($account->status != 'active') {
+                        $desc = $account->description;
+                        return response()->json([
+                            'error' => $desc
+                                ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." . PHP_EOL . "علت: " . $desc
+                                : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
+                        ], 403);
+                    }
+
                     if (!$license->is_active) {
                         // Activate the license with the current user
                         $license->is_active = true;
@@ -285,16 +327,6 @@ class ApiController extends Controller
                     'error' => 'سیستم شما مطابق با مجوز ثبت شده نیست.',
                 ], 403);
             }
-
-            if ($account->status != 'active') {
-                $desc = $account->description;
-                return response()->json([
-                    'error' => $desc
-                        ? "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید." . PHP_EOL . "علت: " . $desc
-                        : "حساب کاربری شما غیرفعال می باشد! لطفا با پشتیبانی تماس بگیرید."
-                ], 403);
-            }
-
 
             return response()->json([
                 'user' => $user,

@@ -34,6 +34,8 @@ Route::middleware(['SetUser', 'ApiLogMiddleware'])->group(function () {
     Route::post('/update-sync-status', [ApiController::class, 'updateStatus']);
     Route::post('/deactive-license', [ApiController::class, 'deactiveLicense']);
     Route::post('/check-license-activation', [ApiController::class, 'checkLicenseActivaation']);
+    Route::post('/check-setup-done', [ApiController::class, 'checkSetupIsDone']);
+    
 });
 
 Route::post('/get-data', [ApiController::class, 'getData']);
