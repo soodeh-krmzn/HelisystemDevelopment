@@ -781,7 +781,7 @@ class ApiController extends Controller
                         break;
 
                     case 'App\\Models\\Sync\\Product':
-                        $newRecord = $this->syncProduct($newRecord, $request);
+                        $newRecord = $this->syncProduct($newRecord, $id);
                         break;
                 }
 
