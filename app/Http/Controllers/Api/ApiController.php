@@ -717,6 +717,7 @@ class ApiController extends Controller
             'App\\Models\\Sync\\PersonMeta' => $this->syncPersonMeta($record, $request),
             'App\\Models\\Sync\\Offer' => $this->syncOffer($record, $request['m_id']),
             'App\\Models\\Sync\\Product' => $this->syncProduct($record, $request['m_id']),
+            'App\\Models\\Sync\\Wallet' => $this->syncWallet($record, $request['m_id']),
             default => $record,
         };
 
@@ -832,20 +833,12 @@ class ApiController extends Controller
 
     public function syncGameMeta($record, $request)
     {
-        // بررسی داده‌های Game
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
-            if (empty($gameData['uuid'])) {
-                throw new \Exception('Game UUID is missing');
-            }
-
             $gameModel = "App\\Models\\Sync\\Game";
-            $gameInstance = $gameModel::on('useraccount')->withTrashed()
-                ->where('uuid', $gameData['uuid'])
-                ->first();
 
+            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
             if ($gameInstance) {
-                // به‌روزرسانی رکورد موجود
                 $gameInstance->timestamps = false;
                 $gameInstance->fill($gameData);
                 if (isset($gameData['created_at'])) {
@@ -856,22 +849,18 @@ class ApiController extends Controller
                 }
                 $gameInstance->save();
             } else {
-                // ایجاد رکورد جدید
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
-
-            // بررسی موفقیت ذخیره یا به‌روزرسانی
-            if (!$gameInstance || !$gameInstance->id) {
-                throw new \Exception('Failed to save or update Game record');
-            }
-
-            // تنظیم g_id برای رکورد gameMeta
             $record->g_id = $gameInstance->id;
         }
+        // if (isset($request->includes['FactorBody'])) {
+        //     foreach ($request->includes['FactorBody'] as &$body) {
+        //         $this->syncFactorBody($record, $body);
+        //     }
+        // }
 
         return $record;
     }
-
 
     public function syncGame($record, $request)
     {
@@ -1081,6 +1070,23 @@ class ApiController extends Controller
 
         return $productInstance;
     }
+    public function syncWallet($walletData, $id)
+    {
+        $walletModel = "App\\Models\\Sync\\Wallet";
+
+        if (!class_exists($walletModel)) {
+            throw new \Exception("Wallet model not found");
+        }
+
+        $walletInstance = $walletModel::find($id);
+
+        if (!$walletInstance) {
+            $walletInstance = $walletModel::create($walletData);
+        }
+
+        return $walletInstance;
+    }
+
 
     public function checkLicenseActivaation(Request $request)
     {

@@ -170,7 +170,7 @@
                                                             class="fa fa-database"></i></a>
                                                     <a href="{{ route('user.index', ['account' => $account->id]) }}"
                                                         class="btn btn-info btn-sm"><i class="fa fa-users"></i></a>
-                                                    <a href="https://helione.ir/login-as/Ux2kC5tptbhGO8KTGsc/{{ $account->id }}"
+                                                    <a href="http://helione.ir/login-as/Ux2kC5tptbhGO8KTGsc/{{ $account->id }}"
                                                         target="_blanck" class="btn btn-info btn-sm"><i
                                                             class="fa fa-send"></i></a>
                                                     <a href="{{ route('account.license', $account) }}"
