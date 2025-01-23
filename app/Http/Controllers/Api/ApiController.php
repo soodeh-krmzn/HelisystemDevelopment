@@ -661,7 +661,7 @@ class ApiController extends Controller
                 $newRecord = $this->handleSync($modelClass, new $modelClass($data), $request, $data);
                 return $this->respondWithSuccess('Record synced successfully', $newRecord);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Sync failed: " . $e->getMessage());
             return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
         }
@@ -671,7 +671,7 @@ class ApiController extends Controller
     {
         $account = Account::findOrFail($accountId);
         if (!$account) {
-            throw new \Exception('Account not found');
+            throw new Exception('Account not found');
         }
         return $account;
     }
@@ -680,7 +680,7 @@ class ApiController extends Controller
     {
         $modelClass = "App\\Models\\Sync\\" . basename(str_replace('\\', '/', $modelName));
         if (!class_exists($modelClass)) {
-            throw new \Exception('Invalid model name');
+            throw new Exception('Invalid model name');
         }
         return $modelClass;
     }
@@ -721,7 +721,7 @@ class ApiController extends Controller
             'App\\Models\\Sync\\Wallet' => $this->syncWallet($record, $request['m_id']),
             default => $record,
         };
-
+        throw new Exception($data);
         $record->timestamps = false;
         $record->fill($data);
         $record->created_at = $data['created_at'] ?? null;
