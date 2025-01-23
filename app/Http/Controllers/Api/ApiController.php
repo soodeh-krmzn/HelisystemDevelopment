@@ -557,7 +557,7 @@ class ApiController extends Controller
             $data = DB::connection('useraccount')->select($query);
 
             return response()->json($data, 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
         }
     }
@@ -655,10 +655,10 @@ class ApiController extends Controller
             $existingRecord = $this->findExistingRecord($modelInstance, $request);
 
             if ($existingRecord) {
-                $updatedRecord = $this->handleSync($modelClass, $existingRecord, $request, $data);
+                $updatedRecord = $this->handleSync($modelClass, $existingRecord, $request, $data, 1);
                 return $this->respondWithSuccess('Record synced updated', $updatedRecord);
             } else {
-                $newRecord = $this->handleSync($modelClass, new $modelClass($data), $request, $data);
+                $newRecord = $this->handleSync($modelClass, new $modelClass($data), $request, $data, 0);
                 return $this->respondWithSuccess('Record synced successfully', $newRecord);
             }
         } catch (Exception $e) {
@@ -707,8 +707,14 @@ class ApiController extends Controller
         return $modelInstance->find($request['m_id']);
     }
 
-    private function handleSync($modelClass, $record, $request, $data)
+    private function handleSync($modelClass, $record, $request, $data, $update)
     {
+        if ($update == 1) {
+            $protectedKeys = ['g_id', 'other_protected_key'];
+            foreach ($protectedKeys as $key) {
+                unset($data[$key]);
+            }
+        }
         $record = match ($modelClass) {
             'App\\Models\\Sync\\Factor' => $this->syncFactor($record, $request),
             'App\\Models\\Sync\\FactorBody' => $this->syncFactorBody($record, $request),
@@ -721,10 +727,9 @@ class ApiController extends Controller
             'App\\Models\\Sync\\Wallet' => $this->syncWallet($record, $request['m_id']),
             default => $record,
         };
-        
+
         $record->timestamps = false;
         $record->fill($data);
-        throw new Exception($record);
         $record->created_at = $data['created_at'] ?? null;
         $record->updated_at = $data['updated_at'] ?? null;
         $record->save();
@@ -838,8 +843,8 @@ class ApiController extends Controller
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
-           
-            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();            
+
+            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
             if ($gameInstance) {
                 $gameInstance->timestamps = false;
                 $gameInstance->fill($gameData);
@@ -849,7 +854,7 @@ class ApiController extends Controller
                 if (isset($gameData['updated_at'])) {
                     $gameInstance->updated_at = $gameData['updated_at'];
                 }
-                $gameInstance->save();                
+                $gameInstance->save();
             } else {
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
