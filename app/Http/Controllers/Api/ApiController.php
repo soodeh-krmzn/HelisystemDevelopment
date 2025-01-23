@@ -848,12 +848,12 @@ class ApiController extends Controller
                 if (isset($gameData['updated_at'])) {
                     $gameInstance->updated_at = $gameData['updated_at'];
                 }
-                $gameInstance->save();
-                throw new Exception($gameInstance);
+                $gameInstance->save();                
             } else {
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
             $record->g_id = $gameInstance->id;
+            throw new Exception($record);
         }
         // if (isset($request->includes['FactorBody'])) {
         //     foreach ($request->includes['FactorBody'] as &$body) {
