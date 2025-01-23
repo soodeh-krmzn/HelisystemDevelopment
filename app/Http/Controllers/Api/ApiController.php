@@ -837,9 +837,9 @@ class ApiController extends Controller
         if (isset($request->includes['Game'])) {
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
-
-            throw new Exception($gameData['uuid']);
+           
             $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
+            throw new Exception($gameInstance);
             if ($gameInstance) {
                 $gameInstance->timestamps = false;
                 $gameInstance->fill($gameData);
