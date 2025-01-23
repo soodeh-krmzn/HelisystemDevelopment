@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\License;
 use App\Models\Sync\Setting;
 use App\Models\User;
+use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -837,6 +838,7 @@ class ApiController extends Controller
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
 
+            throw new Exception($gameData['uuid']);
             $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
             if ($gameInstance) {
                 $gameInstance->timestamps = false;
