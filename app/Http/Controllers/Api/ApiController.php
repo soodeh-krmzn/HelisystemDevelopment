@@ -735,7 +735,7 @@ class ApiController extends Controller
                     case 'App\\Models\\Sync\\Product':
                         $existingRecord = $this->syncProduct($existingRecord, $id);
                         break;
-                        
+
                     case 'App\\Models\\Sync\\Wallet':
                         $existingRecord = $this->syncWallet($existingRecord, $id);
                         break;
@@ -802,113 +802,6 @@ class ApiController extends Controller
             return response()->json(['error' => 'Failed to sync data' . $e->getMessage()], 500);
         }
     }
-
-    // public function storeSyncData(Request $request)
-    // {
-    //     try {
-    //         $account = $this->getValidAccount($request['accountId']);
-    //         if (!$this->checkAccountCharge($account)) {
-    //             return response()->json([
-    //                 'error' => __('کاربر گرامی شارژ اشتراک شما به پایان رسیده است.'),
-    //             ], 403);
-    //         }
-
-    //         $modelClass = $this->resolveModelClass($request['model_name']);
-    //         $modelInstance = $this->initializeModelInstance($modelClass, $account);
-
-    //         $data = $request->input('data', []);
-    //         $existingRecord = $this->findExistingRecord($modelInstance, $request);
-
-    //         if ($existingRecord) {
-    //             $updatedRecord = $this->handleSync($modelClass, $existingRecord, $request, $data, 1);
-    //             return $this->respondWithSuccess('Record synced updated', $updatedRecord);
-    //         } else {
-    //             $newRecord = $this->handleSync($modelClass, new $modelClass($data), $request, $data, 0);
-    //             return $this->respondWithSuccess('Record synced successfully', $newRecord);
-    //         }
-    //     } catch (Exception $e) {
-    //         Log::error("Sync failed: " . $e->getMessage());
-    //         return response()->json(['error' => 'Failed to sync data: ' . $e->getMessage()], 500);
-    //     }
-    // }
-
-    // private function getValidAccount($accountId)
-    // {
-    //     $account = Account::findOrFail($accountId);
-    //     if (!$account) {
-    //         throw new Exception('Account not found');
-    //     }
-    //     return $account;
-    // }
-
-    // private function resolveModelClass($modelName)
-    // {
-    //     $modelClass = "App\\Models\\Sync\\" . basename(str_replace('\\', '/', $modelName));
-    //     if (!class_exists($modelClass)) {
-    //         throw new Exception('Invalid model name');
-    //     }
-    //     return $modelClass;
-    // }
-
-    // private function initializeModelInstance($modelClass, $account)
-    // {
-    //     $decrypted = $this->decrypt($account->db_name, $account->db_user, $account->db_pass);
-    //     (new Database())->connect([
-    //         'name' => $decrypted['name'],
-    //         'user' => $decrypted['user'],
-    //         'pass' => $decrypted['pass'],
-    //     ]);
-
-    //     $modelInstance = new $modelClass;
-    //     $modelInstance->setConnection('useraccount');
-    //     return $modelInstance;
-    // }
-
-    // private function findExistingRecord($modelInstance, $request)
-    // {
-    //     if (!empty($request['m_uuid'])) {
-    //         return $modelInstance->where('uuid', $request['m_uuid'])->first();
-    //     }
-    //     return $modelInstance->find($request['m_id']);
-    // }
-
-    // private function handleSync($modelClass, $record, $request, $data, $update)
-    // {
-    //     if ($update == 1) {
-    //         $protectedKeys = ['g_id', 'other_protected_key'];
-    //         foreach ($protectedKeys as $key) {
-    //             unset($data[$key]);
-    //         }
-    //     }
-    //     $record = match ($modelClass) {
-    //         'App\\Models\\Sync\\Factor' => $this->syncFactor($record, $request),
-    //         'App\\Models\\Sync\\FactorBody' => $this->syncFactorBody($record, $request),
-    //         'App\\Models\\Sync\\Game' => $this->syncGame($record, $request),
-    //         'App\\Models\\Sync\\GameMeta' => $this->syncGameMeta($record, $request),
-    //         'App\\Models\\Sync\\Payment' => $this->syncPayment($record, $request),
-    //         'App\\Models\\Sync\\PersonMeta' => $this->syncPersonMeta($record, $request),
-    //         'App\\Models\\Sync\\Offer' => $this->syncOffer($record, $request['m_id']),
-    //         'App\\Models\\Sync\\Product' => $this->syncProduct($record, $request['m_id']),
-    //         'App\\Models\\Sync\\Wallet' => $this->syncWallet($record, $request['m_id']),
-    //         default => $record,
-    //     };
-
-    //     $record->timestamps = false;
-    //     $record->fill($data);
-    //     $record->created_at = $data['created_at'] ?? null;
-    //     $record->updated_at = $data['updated_at'] ?? null;
-    //     $record->save();
-
-    //     return $record;
-    // }
-
-    // private function respondWithSuccess($message, $record)
-    // {
-    //     return response()->json([
-    //         'message' => $message,
-    //         'data' => $record->toArray(),
-    //     ], 200);
-    // }
 
     public function syncFactor($record, $request)
     {
