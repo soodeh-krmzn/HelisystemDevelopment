@@ -838,8 +838,7 @@ class ApiController extends Controller
             $gameData = $request->includes['Game'];
             $gameModel = "App\\Models\\Sync\\Game";
            
-            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();
-            throw new Exception($gameInstance);
+            $gameInstance = $gameModel::on('useraccount')->withTrashed()->where('uuid', $gameData['uuid'])->first();            
             if ($gameInstance) {
                 $gameInstance->timestamps = false;
                 $gameInstance->fill($gameData);
@@ -850,6 +849,7 @@ class ApiController extends Controller
                     $gameInstance->updated_at = $gameData['updated_at'];
                 }
                 $gameInstance->save();
+                throw new Exception($gameInstance);
             } else {
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
