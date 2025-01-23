@@ -721,9 +721,10 @@ class ApiController extends Controller
             'App\\Models\\Sync\\Wallet' => $this->syncWallet($record, $request['m_id']),
             default => $record,
         };
-        throw new Exception($record);
+        
         $record->timestamps = false;
         $record->fill($data);
+        throw new Exception($record);
         $record->created_at = $data['created_at'] ?? null;
         $record->updated_at = $data['updated_at'] ?? null;
         $record->save();
