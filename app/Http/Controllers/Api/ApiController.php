@@ -853,7 +853,6 @@ class ApiController extends Controller
                 $gameInstance = $gameModel::on('useraccount')->create($gameData);
             }
             $record->g_id = $gameInstance->id;
-            throw new Exception($record);
         }
         // if (isset($request->includes['FactorBody'])) {
         //     foreach ($request->includes['FactorBody'] as &$body) {
