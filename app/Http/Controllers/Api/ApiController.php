@@ -723,9 +723,6 @@ class ApiController extends Controller
                         unset($data['person_id']);
                         break;
 
-                        // case 'App\\Models\\Sync\\Person':
-                        //     $existingRecord = $this->syncPerson($existingRecord, $request);
-                        //     break;
                     case 'App\\Models\\Sync\\PersonMeta':
                         $existingRecord = $this->syncPersonMeta($existingRecord, $request);
                         unset($data['person_id']);
@@ -737,6 +734,10 @@ class ApiController extends Controller
 
                     case 'App\\Models\\Sync\\Product':
                         $existingRecord = $this->syncProduct($existingRecord, $id);
+                        break;
+                        
+                    case 'App\\Models\\Sync\\Wallet':
+                        $existingRecord = $this->syncWallet($existingRecord, $id);
                         break;
                 }
 
@@ -783,6 +784,9 @@ class ApiController extends Controller
 
                     case 'App\\Models\\Sync\\Product':
                         $newRecord = $this->syncProduct($newRecord, $id);
+                        break;
+                    case 'App\\Models\\Sync\\Wallet':
+                        $newRecord = $this->syncWallet($newRecord, $id);
                         break;
                 }
 
