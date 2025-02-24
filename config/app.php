@@ -126,8 +126,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    // 'custom_key' => 'c+jFUYjpabPKw06kXDajqlx41gYnGpVvYRupIV/gORA=',
-    'custom_key' => 'OcSBZxEgp7oDQDOKubC/51hjaWWmbMaGKGZzxoMI9g0=',
+    'custom_key' => 'c+jFUYjpabPKw06kXDajqlx41gYnGpVvYRupIV/gORA=',
+    // 'custom_key' => 'OcSBZxEgp7oDQDOKubC/51hjaWWmbMaGKGZzxoMI9g0=',
     
     /*
     |--------------------------------------------------------------------------
